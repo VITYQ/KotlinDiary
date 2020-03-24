@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "532174920443",
+    "firebase_url": "https://diary-29a26.firebaseio.com",
+    "project_id": "diary-29a26",
+    "storage_bucket": "diary-29a26.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:532174920443:android:1958f8e488b35800502e5e",
+        "android_client_info": {
+          "package_name": "com.VitalySorokin.kotlindiary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "532174920443-qlmeivbtp8k4aiuaj805477l4g334nem.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhPk7WH1FOQwhFn_M8xC17PkvQK9jOmvk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "532174920443-qlmeivbtp8k4aiuaj805477l4g334nem.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
