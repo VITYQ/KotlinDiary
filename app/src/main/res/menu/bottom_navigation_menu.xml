@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/one"
+        android:title="Расписание"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:enabled="true"/>
+    <item android:id="@+id/two"
+        android:title="В ожидании"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_work_black_24dp"
+        android:enabled="true"/>
+    <item android:id="@+id/three"
+        android:title="Настройки"
+        android:icon="@drawable/ic_settings_black_24dp"
+        app:showAsAction="ifRoom"
+        android:enabled="true"/>
+</menu>

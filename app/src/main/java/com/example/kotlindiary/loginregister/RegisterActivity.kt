@@ -1,14 +1,16 @@
-package com.example.kotlindiary
+package com.example.kotlindiary.loginregister
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import com.example.kotlindiary.MainActivity
+import com.example.kotlindiary.R
+import com.example.kotlindiary.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -115,16 +117,19 @@ class RegisterActivity : AppCompatActivity() {
             }
     }
 
+    //Сохранение данных в firebase
     private fun saveUserToFireBaseDatabase(){
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
         val url = userImageUrl
         Log.d("RegisterActivity", "I'm here")
-        val user = User(uid, editText_UsernameLogin.text.toString(), url, editText_Email.text.toString())
+        val user = User(uid, editText_UsernameLogin.text.toString(), url, editText_Email.text.toString(), "", "", "", "")
         ref.setValue(user)
             .addOnSuccessListener {
                 Log.d("RegisterActivity", "Finally complete registration and save user to database")
-                //val intent = Intent(this)
+                val intent = Intent(this, ProfileActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
             }
             .addOnFailureListener{
                 Log.d("RegisterActivity", "Something has gone wrong")
@@ -144,8 +149,8 @@ class RegisterActivity : AppCompatActivity() {
 //    }
 
 
-    class User (val uid : String, val username : String, val profileImageUrl: String, val email: String){
-
-    }
+//    class User (val uid : String, val username : String, val profileImageUrl: String, val email: String, val name : String, val surname: String){
+//        constructor() : this ("", "", "", "", "", "")
+//    }
 
 }
