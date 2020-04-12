@@ -54,8 +54,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_coordinator)
         val bottomSheetBehavior = BottomSheetBehavior.from(layoutBottomSheet)
-
-
+        var data = Date().day
+        when (data) {
+            1 -> ToolBar_Main.title = "Пн."
+            2 -> ToolBar_Main.title = "Вт."
+            3 -> ToolBar_Main.title = "Ср."
+            4 -> ToolBar_Main.title = "Чт."
+            5 -> ToolBar_Main.title = "Пт."
+            6 -> ToolBar_Main.title = "Сб."
+            7 -> ToolBar_Main.title = "Вс."
+        }
 
         supportFragmentManager
             .beginTransaction()
@@ -83,7 +91,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.ToolBar_Main))
         //ToolBar.setTitle("Расписание2")
         //ToolBar_Main.title = "Расписание1"
-        ToolBar_Main.title = "Заголовок"
+        //ToolBar_Main.title = "Заголовок"
         //fetchHomework()
         //verifyIsUserLoggedIn()
         //fetchHomework()
@@ -93,7 +101,7 @@ class MainActivity : AppCompatActivity() {
 //        mainFragment.viewpager_main.adapter = adapter
         //supportActionBar?.title = "Расписание"
         val bar = actionBar
-        bar?.title = "Расписание3"
+        //bar?.title = "Расписание3"
         var date = Date().time
         date = date + 100000000
         val year = Date(date).date
@@ -119,15 +127,7 @@ class MainActivity : AppCompatActivity() {
 //        var data = Date().day
 //        //Log.d("Date", "$createdAt")
 //        val previousPage = 251
-//        when (data) {
-//            1 -> ToolBar_Main.title = "Пн."
-//            2 -> ToolBar_Main.title = "Вт."
-//            3 -> ToolBar_Main.title = "Ср."
-//            4 -> ToolBar_Main.title = "Чт."
-//            5 -> ToolBar_Main.title = "Пт."
-//            6 -> ToolBar_Main.title = "Сб."
-//            7 -> ToolBar_Main.title = "Вс."
-//        }
+
 //        viewpager_main.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback){
 //            override fun onPageSelected(position: Int){
 //                super .onPage
@@ -240,7 +240,8 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item?.itemId){
             R.id.menu_add ->{
-
+                val intent = Intent(this, SetTimetableActivity::class.java)
+                startActivity(intent)
             }
             R.id.menu_sign_out ->{
                 FirebaseAuth.getInstance().signOut()

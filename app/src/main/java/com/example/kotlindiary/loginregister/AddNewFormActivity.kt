@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
 import com.example.kotlindiary.R
-import com.example.kotlindiary.models.User
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_add_new_form.*
 
@@ -18,7 +17,7 @@ class AddNewFormActivity : AppCompatActivity() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, forms)
         spinner_Letter.adapter = adapter
         button.setOnClickListener{
-            if(!editText.text.isEmpty()){
+            if(!editText_hometask_bottom.text.isEmpty()){
                 UploadFormToFireBase()
             }
         }
@@ -27,7 +26,7 @@ class AddNewFormActivity : AppCompatActivity() {
 
 
     private fun UploadFormToFireBase(){
-        val ref = FirebaseDatabase.getInstance().getReference("/schools/${intent.getStringExtra("schoolName")}/${editText.text.toString()}${spinner_Letter.selectedItem.toString()}")
-        ref.child("name").setValue("${editText.text.toString()}${spinner_Letter.selectedItem.toString()}")
+        val ref = FirebaseDatabase.getInstance().getReference("/schools/${intent.getStringExtra("schoolName")}/${editText_hometask_bottom.text.toString()}${spinner_Letter.selectedItem.toString()}")
+        ref.child("name").setValue("${editText_hometask_bottom.text.toString()}${spinner_Letter.selectedItem.toString()}")
     }
 }
