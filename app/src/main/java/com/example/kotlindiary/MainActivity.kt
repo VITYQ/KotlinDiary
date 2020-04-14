@@ -238,7 +238,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item?.itemId){
+        when (item.itemId){
             R.id.menu_add ->{
                 val intent = Intent(this, SetTimetableActivity::class.java)
                 startActivity(intent)

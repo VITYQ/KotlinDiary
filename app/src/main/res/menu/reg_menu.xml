@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+<!--    <item-->
+<!--        android:checked="true"-->
+<!--        android:id="@+id/first"-->
+<!--        app:showAsAction="ifRoom"-->
+<!--        android:title="Далее"/>-->
+    <item
+        android:id="@+id/menu_next"
+        android:icon="@drawable/ic_navigate_next_black_24dp"
+        android:iconTint="@color/colorPrimary"
+        android:title="second"
+        app:showAsAction="always|withText" />
+
+</menu>

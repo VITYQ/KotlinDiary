@@ -101,7 +101,7 @@ class MainFragment : Fragment() {
 //            Log.d("DBLog", "Clicked bottom sheet button")
 //        }
 
-
+        
 
 //        when (data) {
 //            1 -> (activity as MainActivity).ToolBar_Main.title = "Пн."
@@ -126,7 +126,7 @@ class MainFragment : Fragment() {
 
 
 
-       // downloadHomework()
+       downloadHomework()
 
 //
         Handler().postDelayed({

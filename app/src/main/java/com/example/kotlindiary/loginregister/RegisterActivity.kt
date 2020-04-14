@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.LayoutInflater
 import android.widget.Toast
 import com.example.kotlindiary.MainActivity
 import com.example.kotlindiary.R
@@ -24,7 +25,7 @@ class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
-
+        //val inflater = LayoutInflater.from(this);
         //database = Firebase.database.reference
 
         button_Register.setOnClickListener(){
