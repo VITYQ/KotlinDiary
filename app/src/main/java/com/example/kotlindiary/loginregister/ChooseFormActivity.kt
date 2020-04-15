@@ -32,13 +32,6 @@ class ChooseFormActivity : AppCompatActivity() {
         }
         FetchForms(schoolName)
 
-//        val adapter = GroupAdapter<GroupieViewHolder>()
-//        adapter.add(FormItem("lele"))
-//        adapter.add(FormItem("kekeke"))
-//        recyclerView_Forms.adapter = adapter
-
-        //recyclerView_Forms.
-
     }
 
 

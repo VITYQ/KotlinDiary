@@ -13,7 +13,7 @@
         android:layout_height="33dp"
         android:layout_marginTop="8dp"
         android:minHeight="50dp"
-        android:text="TextView"
+        android:text="*Нажмите, чтобы добавить дз*"
         app:layout_constraintEnd_toEndOf="@+id/textView2"
         app:layout_constraintStart_toStartOf="@+id/textView2"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />

@@ -9,9 +9,9 @@
 <!--        android:title="Далее"/>-->
     <item
         android:id="@+id/menu_next"
-        android:icon="@drawable/ic_navigate_next_black_24dp"
         android:iconTint="@color/colorPrimary"
-        android:title="second"
+        android:title="Далее"
         app:showAsAction="always|withText" />
+    <!--        android:icon="@drawable/ic_navigate_next_black_24dp"-->
 
 </menu>

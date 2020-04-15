@@ -52,12 +52,13 @@ import java.util.*
  */
 
 
-var data = Date().day
+var data = Date().day-1
 var previousPage = 0
 lateinit var mainviewpager : ViewPager2
 lateinit var bottomsheet : BottomSheetBehavior<ConstraintLayout>
 lateinit var buttonBottomSheet : Button
 lateinit var editTextBottomSheet: EditText
+var timetableDaysActivated = booleanArrayOf(false, false, false, false, false, false, false)
 var year = Date().year
 var month = Date().month
 var date = Date().date
@@ -77,6 +78,13 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("datelogging", "Today is ${currentpagedate.time.day.toString()}")
+        Log.d("Datelog", data.toString())
+        for(i in 0..timetableDaysActivated.size-1){
+            Log.d("DBLog", "BEFORE: i : $i, ${timetableDaysActivated[i].toString()}")
+        }
+
+        Log.d("Datelog", currentpagedate.time.day.toString())
         val string = arrayOf<String>("dgsg", "fsdgdsfg")
         bottomsheet = BottomSheetBehavior.from((activity as MainActivity).layoutBottomSheet)
         (activity as MainActivity).ToolBar_Main.title = "$date $month, $day"
@@ -126,15 +134,14 @@ class MainFragment : Fragment() {
 
 
 
-       downloadHomework()
+       //downloadHomework()
 
 //
-        Handler().postDelayed({
-            mainviewpager.setCurrentItem(250, false) }, 1)
+       // Handler().postDelayed({ mainviewpager.setCurrentItem(250, false) }, 1)
 
+        //ViewPager2Adapter("", ""){}
 
-
-
+        Log.d("Timetabledownload", "==================================================== ")
         //Log.d("HI", mainviewpager.size.toString())
         mainviewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
             override fun onPageSelected(position: Int) {
@@ -143,6 +150,13 @@ class MainFragment : Fragment() {
                 val activity = activity as MainActivity
                 Log.d("ChangeTitle", "ChangeCallback: $position")
                 changeTitle(position, activity)
+//                for(i in 1..10){
+//                    Log.d("datelogging", currentpagedate.time.day.toString())
+//                    currentpagedate.add(Calendar.DATE, 1)
+//                }
+//                Log.d("datelogging", currentpagedate.time.day.toString())
+                //currentpagedate.add(Calendar.DATE, 1)
+                //Log.d("Datelog", currentpagedate.time.day.toString())
 
 
 //                recycleview_TimetableFragment.setOnClickListener{
@@ -186,20 +200,27 @@ public fun downloadHomework(){
             val refTimetable = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/$form/timetable")
             refTimetable.addValueEventListener(object : ValueEventListener{
                 override fun onDataChange(p0: DataSnapshot) {
-                    var array = emptyArray<String>()
+                    var timetable = Array(7, { mutableListOf<String>()})
                     var arrayHometask = emptyArray<String>()
-                    p0.children.forEach{
+                    //Log.d("DBLog", p0.toString())
 
-                        array += it.child("lessonName").getValue().toString()
-                        arrayHometask += it.child("hometask").getValue().toString()
-                        //Log.d("DBLog", "${array[0]}")
+                    p0.children.forEach {
+                        //Log.d("DBLog", it.toString())
+                        val key = it.key?.toInt()
+                        if (key!=null){
+                            timetableDaysActivated[key]=true
+                            it.children.forEach{
+                                //timetable[key].add(it.toString())
+                                Log.d("Timetabledownload", "key : $key, it: ${it.toString()} ")
+                                timetable[key].add(it.value.toString())
+                            }
+                        }
 
                     }
-                    array.forEach {
-                        Log.d("DBLog", "Inside ondatachange: $it")
-                    }
+                   // ViewPager2Adapter(timetable, arrayHometask, schoolName, form){}
+                    val arrayfortimetable : Array<MutableList<String>> = makeIntForTimetableAdapter()
                     if(schoolName != null && form != null){
-                        var adapter = ViewPager2Adapter(array,arrayHometask, schoolName, form){}
+                        var adapter = ViewPager2Adapter(arrayfortimetable, timetable,arrayHometask, schoolName, form){}
                         //adapter.notifyDataSetChanged()
                         mainviewpager.adapter = adapter
 
@@ -208,6 +229,37 @@ public fun downloadHomework(){
 
                         //Log.d("DBLog", mainviewpager.size.toString())
                     }
+                    for(i in 0..6){
+                        timetable[i].forEach{
+                            Log.d("DBLog", "Day $i : ${it}")
+                        }
+                    }
+
+                    for(i in 0..timetableDaysActivated.size-1){
+                        Log.d("DBLog", "AFTER: i : $i, ${timetableDaysActivated[i].toString()}")
+                    }
+//                    var array = emptyArray<String>()
+//                    var arrayHometask = emptyArray<String>()
+//                    p0.children.forEach{
+//
+//                        array += it.child("lessonName").getValue().toString()
+//                        arrayHometask += it.child("hometask").getValue().toString()
+//                        //Log.d("DBLog", "${array[0]}")
+//
+//                    }
+//                    array.forEach {
+//                        Log.d("DBLog", "Inside ondatachange: $it")
+//                    }
+//                    if(schoolName != null && form != null){
+//                        var adapter = ViewPager2Adapter(array,arrayHometask, schoolName, form){}
+//                        //adapter.notifyDataSetChanged()
+//                        mainviewpager.adapter = adapter
+//
+//
+//                        //mainviewpager.setCurrentItem(200, false)
+//
+//                        //Log.d("DBLog", mainviewpager.size.toString())
+//                    }
 
 
                 }
@@ -216,6 +268,7 @@ public fun downloadHomework(){
 
                 }
             })
+
 
 
         }
@@ -239,7 +292,7 @@ public fun downloadHomework(){
 
 
 
-    class ViewPager2Adapter(val timetable : Array<String>, val hometask : Array<String>, val school : String, val form : String, private val itemClickListener: (Int) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    class ViewPager2Adapter(val arrayfortimetable : Array<MutableList<String>>, val timetable : Array<MutableList<String>>, val hometask : Array<String>, val school : String, val form : String, private val itemClickListener: (Int) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         val items = mutableListOf<Any>()
 
@@ -249,7 +302,18 @@ public fun downloadHomework(){
         override fun getItemCount(): Int = 500
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            val adapter = RecyclerViewAdapter(timetable, hometask, school, form){}
+
+
+            for(i in 250..270){
+                Log.d("LogAdapter", "i: $i, ${arrayfortimetable[i]}")
+            }
+
+
+
+
+
+
+            val adapter = RecyclerViewAdapter(arrayfortimetable[position][1],timetable[arrayfortimetable[position][0].toInt()], hometask, school, form){}
             holder.itemView.recycleview_TimetableFragment.adapter = adapter
             //holder.itemView.recycleview_TimetableFragment.addItemDecoration(DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL))
 //            holder.itemView.recycleview_TimetableFragment.setOnClickListener {
@@ -274,7 +338,7 @@ public fun downloadHomework(){
     }
 
 
-    class RecyclerViewAdapter(val timetable: Array<String>, val hometask : Array<String>, val school : String, val form : String, private val itemClickListener: (Int) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    class RecyclerViewAdapter(val date : String,val timetable : MutableList<String>, val hometask : Array<String>, val school : String, val form : String, private val itemClickListener: (Int) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         val items = mutableListOf<Any>()
 
@@ -285,13 +349,29 @@ public fun downloadHomework(){
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             holder.itemView.textView2.text = timetable[position]
-            Log.d("DBLog", "Hometask : ${hometask[position]}")
-            if (hometask[position] == "null"){
-                holder.itemView.textView.text = "Нажмите, чтобы добавить задание"
-            }
-            else{
-                holder.itemView.textView.text = hometask[position]
-            }
+            val ref = FirebaseDatabase.getInstance().getReference("/schools/$school/$form/hometasks/$date/")
+            ref.addValueEventListener(object : ValueEventListener{
+                override fun onDataChange(p0: DataSnapshot) {
+                    p0.children.forEach {
+                        if(it.key == timetable[position]){
+                        //Log.d("DBLogging", "key: $")
+                            holder.itemView.textView.text = it.value.toString()
+                        }
+
+                    }
+                }
+
+                override fun onCancelled(p0: DatabaseError) {
+
+                }
+            })
+            //Log.d("DBLog", "Hometask : ${hometask[position]}")
+//            if (hometask[position] == "null"){
+//                holder.itemView.textView.text = "Нажмите, чтобы добавить задание"
+//            }
+//            else{
+//                holder.itemView.textView.text = hometask[position]
+//            }
             holder.itemView.setOnClickListener {
                 Log.d("logi", "Click RecyclerView bind! Name : ${it.textView2.text}" )
                 val view = it
@@ -401,7 +481,40 @@ public fun downloadHomework(){
 //    }
 
 
-
+    fun makeIntForTimetableAdapter() : Array<MutableList<String>>{
+        //var arrayint = Array(500, {0})
+        var arrayint = Array(500, { mutableListOf<String>()})
+        var calendarforadapter = Calendar.getInstance()
+        for(i in 250..499){
+            if(timetableDaysActivated[calendarforadapter.time.day] == false){
+                while(timetableDaysActivated[calendarforadapter.time.day]!=true){
+                    calendarforadapter.add(Calendar.DATE, 1)
+                }
+            }
+            arrayint[i].add(calendarforadapter.time.day.toString())
+            val date = calendarforadapter.time.date
+            val month = calendarforadapter.time.month+1
+            val year = calendarforadapter.time.year+1900
+            arrayint[i].add("$date-$month-$year")
+            calendarforadapter.add(Calendar.DATE, 1)
+        }
+        calendarforadapter = Calendar.getInstance()
+        calendarforadapter.add(Calendar.DATE, -1)
+        for(i in 249 downTo 0){
+            if(timetableDaysActivated[calendarforadapter.time.day] == false){
+                while(timetableDaysActivated[calendarforadapter.time.day]!=true){
+                    calendarforadapter.add(Calendar.DATE, -1)
+                }
+            }
+            arrayint[i].add(calendarforadapter.time.day.toString())
+            val date = calendarforadapter.time.date
+            val month = calendarforadapter.time.month+1
+            val year = calendarforadapter.time.year+1900
+            arrayint[i].add("$date-$month-$year")
+            calendarforadapter.add(Calendar.DATE, -1)
+        }
+        return arrayint
+    }
 
 
 
@@ -418,34 +531,64 @@ public fun downloadHomework(){
         }
         else {
             Log.d("DateLog", "pr: $previousPage, cu: $position")
-            var dayc = 0
+
             var monthc = 0
             var datec = 0
             var string = ""
             var date = Date()
-            if (position > previousPage) {
-                if (data == 7) data = 1
-                else data++
-                previousPage++
+            date = currentpagedate.getTime()
+            var dayc = date.day-1
+
+            if(position > previousPage){
+                Log.d("DateLog", "+")
                 currentpagedate.add(Calendar.DATE, 1)
-                date = currentpagedate.getTime()
-                dayc = date.day
-                monthc = date.month
-                datec = date.date
-                string = "$datec $monthc, $dayc"
-            } else {
-                if (data == 1) data = 7
-                else data--
-                previousPage--
-                currentpagedate.add(Calendar.DATE, -1)
-                date = currentpagedate.getTime()
-                dayc = date.day
-                monthc = date.month
-                datec = date.date
-                string = "$datec $monthc, $dayc"
+                if(timetableDaysActivated[currentpagedate.time.day]==false){
+                    while(timetableDaysActivated[currentpagedate.time.day]!= true){
+                        currentpagedate.add(Calendar.DATE, 1)
+                        //date = currentpagedate.getTime()
+                        //dayc = date.day-1
+                    }
+                }
             }
+            else{
+                Log.d("DateLog", "- : pr : $previousPage, cu : $position" )
+                currentpagedate.add(Calendar.DATE, -1)
+                if(timetableDaysActivated[currentpagedate.time.day] == false){
+                    while(timetableDaysActivated[currentpagedate.time.day] != true){
+                        currentpagedate.add(Calendar.DATE, -1)
+                    }
+                }
+            }
+            previousPage = position
+            dayc = currentpagedate.time.day
+            monthc = currentpagedate.time.month
+            datec = currentpagedate.time.date
+            string = "$datec $monthc, $dayc"
             activity.ToolBar_Main.title = string
             Log.d("DateLog", "$string")
+//            if (position > previousPage) {
+//                if (data == 7) data = 1
+//                else data++
+//                previousPage++
+//                currentpagedate.add(Calendar.DATE, 1)
+//                date = currentpagedate.getTime()
+//                dayc = date.day
+//                monthc = date.month
+//                datec = date.date
+//                string = "$datec $monthc, $dayc"
+//            } else {
+//                if (data == 1) data = 7
+//                else data--
+//                previousPage--
+//                currentpagedate.add(Calendar.DATE, -1)
+//                date = currentpagedate.getTime()
+//                dayc = date.day
+//                monthc = date.month
+//                datec = date.date
+//                string = "$datec $monthc, $dayc"
+//            }
+//            activity.ToolBar_Main.title = string
+//            Log.d("DateLog", "$string")
         }
     }
 

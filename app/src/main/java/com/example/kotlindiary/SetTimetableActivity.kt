@@ -6,14 +6,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.Adapter
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import android.widget.Toolbar
 import androidx.appcompat.view.menu.ActionMenuItemView
 import androidx.core.view.isEmpty
 import androidx.core.view.isNotEmpty
@@ -23,6 +21,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout.MODE_SCROLLABLE
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
@@ -44,11 +43,37 @@ class SetTimetableActivity : AppCompatActivity() {
 
 var positionviewpager = 0
 var array = Array(7, { mutableListOf<String>()})
-
+var schoolName : String = ""
+var form : String = ""
+val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_set_timetable)
+        Log.d("Checkarray", dayvalues[3].toString())
+        if(intent.getStringExtra("schoolName") == null || intent.getStringExtra("form") == null){
+            val uid = FirebaseAuth.getInstance().uid
+            val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+            //schoolName = ref.get
+            ref.addListenerForSingleValueEvent(object : ValueEventListener{
+                override fun onDataChange(p0: DataSnapshot) {
+                    Log.d("DBLog", p0.child("form").getValue().toString())
+                    schoolName = p0.child("school").getValue().toString()
+                    form = p0.child("form").getValue().toString()
+                }
+
+                override fun onCancelled(p0: DatabaseError) {
+
+                }
+            })
+        }
+        else{
+            schoolName = intent.getStringExtra("schoolName")
+            form = intent.getStringExtra("form")
+        }
+
+
+
 
         var monday = emptyArray<String>()
         var tuesday = emptyArray<String>()
@@ -90,22 +115,16 @@ var array = Array(7, { mutableListOf<String>()})
             val text = textInputLayout.editText?.text
 
             if(text.toString() != ""){
-                Toast.makeText(this, textInputLayout.editText?.text, Toast.LENGTH_SHORT).show()
-                array[positionviewpager].add(text.toString())
-                adapter.notifyDataSetChanged()
-                bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED
-//                val adapter = ViewPager2Adapter(array)
-//                viewPager2_timetableq.adapter = adapter
-//                viewPager2_timetableq.setCurrentItem(positionviewpager)
-//                when(positionviewpager){
-//                    0 ->{monday+=textInputLayout.editText?.text.toString()}
-//                    1 ->{tuesday+=textInputLayout.editText?.text.toString()}
-//                    2 ->{wednesday+=textInputLayout.editText?.text.toString()}
-//                    3 ->{thursday+=textInputLayout.editText?.text.toString()}
-//                    4 ->{friday+=textInputLayout.editText?.text.toString()}
-//                    5 ->{saturday+=textInputLayout.editText?.text.toString()}
-//                    6 ->{sunday+=textInputLayout.editText?.text.toString()}
-//                }
+                if(text.toString().contains(".") || text.toString().contains("#") || text.toString().contains("$") || text.toString().contains("[") || text.toString().contains("]")){
+                    Toast.makeText(this, "Название урока не может содержать в себе '.', '#', '$', '[', ']'", Toast.LENGTH_SHORT).show()
+                }
+                else{
+                    Toast.makeText(this, textInputLayout.editText?.text, Toast.LENGTH_SHORT).show()
+                    array[positionviewpager].add(text.toString())
+                    adapter.notifyDataSetChanged()
+                    bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED
+                }
+
             }
             else{
                 Toast.makeText(this, "Заполните поле", Toast.LENGTH_SHORT).show()
@@ -115,7 +134,7 @@ var array = Array(7, { mutableListOf<String>()})
         }
 
 
-        val items = listOf("Русский язык", "Английский язык", "Алгебра", "Биология", "Геометрия", "География",
+        val items = listOf("Русский язык", "Английский язык", "Алгебра", "Астрономия","Биология", "Геометрия", "География",
             "ИЗО", "Информатика", "История", "Литература", "Математика", "Музыка", "Немецкий язык", "Окружающий мир","ОБЖ", "Обществознание", "Природоведение", "Труд","Французский язык",
             "Физкультура", "Физика", "Химия", "Чтение", "Черчение")
         val adapterlist = ArrayAdapter(this, R.layout.dropdown_menu_popup_item, items)
@@ -190,7 +209,11 @@ var array = Array(7, { mutableListOf<String>()})
 //                }
             }
         })
-
+        val itemnext = findViewById<View>(R.id.menu_next)
+            itemnext.setOnClickListener {
+                Log.d("DBLog", "Clicked inside listener YAY")
+                uploadTimetable(array)
+            }
 //        val string = arrayOf<String>("dgsg", "fsdgdsfg")
 //        val adapter = ViewPager2Adapter(string)
 //        viewPager2_timetableq.adapter = adapter
@@ -237,12 +260,18 @@ var array = Array(7, { mutableListOf<String>()})
 
 
     }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.reg_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
             R.id.menu_next -> {
-                uploadTimetable(array)
+                //uploadTimetable(array)
+                Log.d("DBLog", "Clicked menu")
             }
 
         }
@@ -252,7 +281,19 @@ var array = Array(7, { mutableListOf<String>()})
 
 
     private fun uploadTimetable(timetable : Array<MutableList<String>>){
-
+        val ref = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/$form/timetable")
+        for(i in 0..6){
+            for(k in 0..(array[i].size-1)){
+                ref.child(dayvalues[i].toString()).child(k.toString()).setValue(array[i][k])
+                    .addOnFailureListener {
+                        Toast.makeText(this, "NO WAY", Toast.LENGTH_SHORT).show()
+                        return@addOnFailureListener
+                    }
+            }
+        }
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 
 
@@ -297,7 +338,7 @@ var array = Array(7, { mutableListOf<String>()})
         override fun getItemCount() = 7
 
         override fun onBindViewHolder(holder: ViewPager2Adapter.ViewHolder, position: Int) {
-            val adapter = RecyclerViewAdapter(string[position])
+            val adapter = RecyclerViewAdapter(string[position]){}
             holder.itemView.recycleview_TimetableFragment.adapter = adapter
             holder.itemView.recycleview_TimetableFragment.setOnClickListener {
                 Log.d("loggggi", "clicked")
@@ -308,13 +349,15 @@ var array = Array(7, { mutableListOf<String>()})
         }
 
 
-        class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+        inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+
+        }
 
 
     }
 
 
-    class RecyclerViewAdapter(val string : MutableList<String>) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>(){
+    class RecyclerViewAdapter(val string : MutableList<String>, private val itemClickListener: (Int) -> Unit) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>(){
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewAdapter.ViewHolder {
             val itemView = LayoutInflater.from(parent.context).inflate(R.layout.schools_row, parent, false)
             return ViewHolder(itemView)
@@ -327,7 +370,21 @@ var array = Array(7, { mutableListOf<String>()})
 
         }
 
-        class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+        inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+            init {
+                itemView.setOnClickListener {
+                    Log.d("logi", "Click RecyclerView!") // WORKS!!!
+                    itemClickListener(adapterPosition)
+                }
+                itemView.setOnLongClickListener(object : View.OnLongClickListener{
+                    override fun onLongClick(v: View?): Boolean {
+
+                        Log.d("logi", "Long click at ${itemView.textView_SchoolName.text}")
+                        return true
+                    }
+                })
+            }
+        }
     }
 
     class timetableDayItem() : Item<GroupieViewHolder>(){
