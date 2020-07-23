@@ -12,6 +12,7 @@ import android.widget.Adapter
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import android.widget.Toolbar
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.menu.ActionMenuItemView
 import androidx.core.view.isEmpty
 import androidx.core.view.isNotEmpty
@@ -92,13 +93,12 @@ val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
         val bottomsheet = BottomSheetBehavior.from(layoutBottomSheet_Timetable)
 
         floatac.setOnClickListener{
-
             Log.d("clicked", "clicked")
             if (bottomsheet.state == BottomSheetBehavior.STATE_COLLAPSED) {
                 bottomsheet.state = BottomSheetBehavior.STATE_EXPANDED
-                buttonBottomSheet.setOnClickListener {
-                    bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED
-                }
+//                buttonBottomSheet.setOnClickListener {
+//                    bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED
+//                }
 
             }
             else {
@@ -109,6 +109,7 @@ val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
 
         val adapter = ViewPager2Adapter(array)
         viewPager2_timetableq.adapter = adapter
+
 
         button_AddToTimetable.setOnClickListener{
 
@@ -367,19 +368,38 @@ val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
 
         override fun onBindViewHolder(holder: RecyclerViewAdapter.ViewHolder, position: Int) {
             holder.itemView.textView_SchoolName.text = string[position]
+            holder.itemView.setOnLongClickListener(object : View.OnLongClickListener{
+                override fun onLongClick(v: View?): Boolean {
+                    Log.d("logi", "Inside bind long click at ${holder.itemView.textView_SchoolName.text}")
+                    val builder = AlertDialog.Builder(holder.itemView.context)
+                    builder.setTitle("Удалить урок?")
+                    builder.setMessage("Вы хотите удалить урок из списка?")
+                    builder.setPositiveButton("Да"){dialog, which ->
+                        Toast.makeText(holder.itemView.context, "Удалено", Toast.LENGTH_SHORT).show()
+                        string.removeAt(position)
+                        notifyItemRemoved(position)
+                        notifyItemRangeChanged(position, string.size)
+                    }
+                    builder.setNegativeButton("Нет"){dialog, which ->
+                        Toast.makeText(holder.itemView.context, "Нет, так нет", Toast.LENGTH_SHORT).show()
+                    }
+                    builder.create().show()
+                    return true
+                }
+            })
 
         }
 
         inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
             init {
                 itemView.setOnClickListener {
-                    Log.d("logi", "Click RecyclerView!") // WORKS!!!
+                    //Log.d("logi", "Click RecyclerView!") // WORKS!!!
                     itemClickListener(adapterPosition)
                 }
                 itemView.setOnLongClickListener(object : View.OnLongClickListener{
                     override fun onLongClick(v: View?): Boolean {
 
-                        Log.d("logi", "Long click at ${itemView.textView_SchoolName.text}")
+                        //Log.d("logi", "Long click at ${itemView.textView_SchoolName.text}")
                         return true
                     }
                 })

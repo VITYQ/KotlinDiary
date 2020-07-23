@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/coordinatorlayout_SetTimetable"
-    android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<!--    android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar"-->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbarlayout"
         android:layout_width="match_parent"

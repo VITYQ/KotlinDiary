@@ -83,66 +83,14 @@ class MainFragment : Fragment() {
         for(i in 0..timetableDaysActivated.size-1){
             Log.d("DBLog", "BEFORE: i : $i, ${timetableDaysActivated[i].toString()}")
         }
-
         Log.d("Datelog", currentpagedate.time.day.toString())
-        val string = arrayOf<String>("dgsg", "fsdgdsfg")
         bottomsheet = BottomSheetBehavior.from((activity as MainActivity).layoutBottomSheet)
         (activity as MainActivity).ToolBar_Main.title = "$date $month, $day"
-        //bottomsheet.state = BottomSheetBehavior.STATE_EXPANDED
-//        val adapter = GroupAdapter<GroupieViewHolder>()
-//        for(i in 1..501){
-//            adapter.add(DayItem(string))
-//        }
-//
-//        viewpager_mainfragment.adapter = adapter
-//        viewpager_mainfragment.setCurrentItem(251)
-//        fetchHomework()
-//        //MainActivity.ToolBar_Main.title = "АГА РАБОТАЕТ"
-//        (activity as MainActivity).ToolBar_Main.title = "fff"
-
-//        var data = Date().day
-//        //Log.d("Date", "$createdAt")
-//        var previousPage = 251
         buttonBottomSheet = (activity as MainActivity).button_sheet_add
         editTextBottomSheet = (activity as MainActivity).editText_hometask_bottom
-//        (activity as MainActivity).button_sheet_add.setOnClickListener{
-//            Log.d("DBLog", "Clicked bottom sheet button")
-//        }
-
-        
-
-//        when (data) {
-//            1 -> (activity as MainActivity).ToolBar_Main.title = "Пн."
-//            2 -> (activity as MainActivity).ToolBar_Main.title = "Вт."
-//            3 -> (activity as MainActivity).ToolBar_Main.title = "Ср."
-//            4 -> (activity as MainActivity).ToolBar_Main.title = "Чт."
-//            5 -> (activity as MainActivity).ToolBar_Main.title = "Пт."
-//            6 -> (activity as MainActivity).ToolBar_Main.title = "Сб."
-//            7 -> (activity as MainActivity).ToolBar_Main.title = "Вс."
-//        }
-
-        //fetchHomework()
-
         mainviewpager = viewpager_mainfragment
         downloadHomework()
-//        Handler().postDelayed({
-//            viewpager_mainfragment.setCurrentItem(250, false) }, 1)
-
-//        mainviewpager.adapter = ViewPager2Adapter(string) {
-//            Log.d("logi", "clicked at : $it")
-//        }
-
-
-
-       //downloadHomework()
-
-//
-       // Handler().postDelayed({ mainviewpager.setCurrentItem(250, false) }, 1)
-
-        //ViewPager2Adapter("", ""){}
-
         Log.d("Timetabledownload", "==================================================== ")
-        //Log.d("HI", mainviewpager.size.toString())
         mainviewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
             override fun onPageSelected(position: Int) {
                 Log.d("DBlog", position.toString())
@@ -150,33 +98,19 @@ class MainFragment : Fragment() {
                 val activity = activity as MainActivity
                 Log.d("ChangeTitle", "ChangeCallback: $position")
                 changeTitle(position, activity)
-//                for(i in 1..10){
-//                    Log.d("datelogging", currentpagedate.time.day.toString())
-//                    currentpagedate.add(Calendar.DATE, 1)
-//                }
-//                Log.d("datelogging", currentpagedate.time.day.toString())
-                //currentpagedate.add(Calendar.DATE, 1)
-                //Log.d("Datelog", currentpagedate.time.day.toString())
-
-
-//                recycleview_TimetableFragment.setOnClickListener{
-//                    Log.d("logi", "C")
-//                }
                 bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED
             }
         })
-
-
-
     }
-//        viewpager_mainfragment.recyclerView_Timetable.setOnClickListener {
-//            Log.d("ClickListenerMain", "clicked : $view")
-//        }
-//        recycleview_TimetableFragment.setOnClickListener {
-//            Log.d("ClickListenerMain", "clicked : $view")
-//        }
 
+    override fun onResume() {
+        Log.d("checkforresume", "started")
+        super.onResume()
     }
+}
+
+
+
 
 public fun downloadHomework(){
     var calendar = Calendar.getInstance()
@@ -196,16 +130,12 @@ public fun downloadHomework(){
             user = p0.getValue(User::class.java)
             val schoolName = user?.school
             val form = user?.form
-            //array = emptyArray<String>()
             val refTimetable = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/$form/timetable")
             refTimetable.addValueEventListener(object : ValueEventListener{
                 override fun onDataChange(p0: DataSnapshot) {
-                    var timetable = Array(7, { mutableListOf<String>()})
+                    var timetable = Array(7, {mutableListOf<String>()})
                     var arrayHometask = emptyArray<String>()
-                    //Log.d("DBLog", p0.toString())
-
                     p0.children.forEach {
-                        //Log.d("DBLog", it.toString())
                         val key = it.key?.toInt()
                         if (key!=null){
                             timetableDaysActivated[key]=true
@@ -217,82 +147,30 @@ public fun downloadHomework(){
                         }
 
                     }
-                   // ViewPager2Adapter(timetable, arrayHometask, schoolName, form){}
                     val arrayfortimetable : Array<MutableList<String>> = makeIntForTimetableAdapter()
                     if(schoolName != null && form != null){
                         var adapter = ViewPager2Adapter(arrayfortimetable, timetable,arrayHometask, schoolName, form){}
                         //adapter.notifyDataSetChanged()
                         mainviewpager.adapter = adapter
-
-
-                        //mainviewpager.setCurrentItem(200, false)
-
-                        //Log.d("DBLog", mainviewpager.size.toString())
                     }
                     for(i in 0..6){
                         timetable[i].forEach{
                             Log.d("DBLog", "Day $i : ${it}")
                         }
                     }
-
                     for(i in 0..timetableDaysActivated.size-1){
                         Log.d("DBLog", "AFTER: i : $i, ${timetableDaysActivated[i].toString()}")
                     }
-//                    var array = emptyArray<String>()
-//                    var arrayHometask = emptyArray<String>()
-//                    p0.children.forEach{
-//
-//                        array += it.child("lessonName").getValue().toString()
-//                        arrayHometask += it.child("hometask").getValue().toString()
-//                        //Log.d("DBLog", "${array[0]}")
-//
-//                    }
-//                    array.forEach {
-//                        Log.d("DBLog", "Inside ondatachange: $it")
-//                    }
-//                    if(schoolName != null && form != null){
-//                        var adapter = ViewPager2Adapter(array,arrayHometask, schoolName, form){}
-//                        //adapter.notifyDataSetChanged()
-//                        mainviewpager.adapter = adapter
-//
-//
-//                        //mainviewpager.setCurrentItem(200, false)
-//
-//                        //Log.d("DBLog", mainviewpager.size.toString())
-//                    }
-
-
                 }
-
-                override fun onCancelled(p0: DatabaseError) {
-
-                }
+                override fun onCancelled(p0: DatabaseError) {}
             })
-
-
-
         }
-
-        override fun onCancelled(p0: DatabaseError) {
-
-        }
-
-
+        override fun onCancelled(p0: DatabaseError) {}
     })
-
-//    val string = arrayOf<String>("dgsg", "fsdgdsfg")
-//    array.forEach {
-//        Log.d("DBLog", it)
-//    }
-//    mainviewpager.adapter = ViewPager2Adapter(array){}
-
 }
 
 
-
-
-
-    class ViewPager2Adapter(val arrayfortimetable : Array<MutableList<String>>, val timetable : Array<MutableList<String>>, val hometask : Array<String>, val school : String, val form : String, private val itemClickListener: (Int) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ViewPager2Adapter(val arrayfortimetable : Array<MutableList<String>>, val timetable : Array<MutableList<String>>, val hometask : Array<String>, val school : String, val form : String, private val itemClickListener: (Int) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         val items = mutableListOf<Any>()
 
@@ -338,7 +216,7 @@ public fun downloadHomework(){
     }
 
 
-    class RecyclerViewAdapter(val date : String,val timetable : MutableList<String>, val hometask : Array<String>, val school : String, val form : String, private val itemClickListener: (Int) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RecyclerViewAdapter(val date : String,val timetable : MutableList<String>, val hometask : Array<String>, val school : String, val form : String, private val itemClickListener: (Int) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         val items = mutableListOf<Any>()
 
@@ -415,73 +293,7 @@ public fun downloadHomework(){
     }
 
 
-
-
-//    private fun downloadHomework(){
-//        val uid = FirebaseAuth.getInstance().uid
-//        Log.d("Loggingg", "The uid : $uid")
-//        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
-//        var user : User?
-//        ref.addListenerForSingleValueEvent(object : ValueEventListener {
-//            override fun onDataChange(p0: DataSnapshot) {
-//                user = p0.getValue(User::class.java)
-//                Log.d("DBlog", "${user?.school.toString()}, ${user?.form.toString()}")
-//                val schoolName = user?.school
-//                val form = user?.form
-//                var array = emptyArray<String>()
-//                val adapter = GroupAdapter<GroupieViewHolder>()
-//                val refTimetable = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/$form/timetable")
-//
-//                refTimetable.addValueEventListener(object : ValueEventListener {
-//                    override fun onDataChange(p0: DataSnapshot) {
-//                        p0.children.forEach{
-//                            array += it.child("lessonName").getValue().toString()
-//                        }
-//                        for(i in 1..501){
-//                            adapter.add(com.example.kotlindiary.DayItem(array))
-//                        }
-//                        viewpager_mainfragment.setCurrentItem(251)
-//
-//                        Log.d("DBlog", "${viewpager_mainfragment.currentItem.toString()}")
-//
-//
-//                    }
-//
-//                    override fun onCancelled(p0: DatabaseError) {
-//
-//                    }
-//                })
-//
-//               viewpager_mainfragment.adapter = adapter
-//
-//
-//
-//
-//                //adapter.setOnItemClickListener(OnItemClickListener { item, view ->  })
-//
-////                    .setOnItemClickListener(object : View.OnClickListener(){
-////                        override fun onClick(v: View?) {
-////
-////                        }
-////                    })
-//
-//
-////                adapter.setOnItemClickListener{item, view ->
-////                    Log.d("LogListener", "clicked on $item")
-////                }
-//
-//
-//            }
-//
-//            override fun onCancelled(p0: DatabaseError) {
-//
-//            }
-//
-//        })
-//    }
-
-
-    fun makeIntForTimetableAdapter() : Array<MutableList<String>>{
+fun makeIntForTimetableAdapter() : Array<MutableList<String>>{
         //var arrayint = Array(500, {0})
         var arrayint = Array(500, { mutableListOf<String>()})
         var calendarforadapter = Calendar.getInstance()
@@ -517,166 +329,46 @@ public fun downloadHomework(){
     }
 
 
-
-    private fun changeTitle(position: Int, activity : MainActivity){
-        if((previousPage == 0 && position == 250)||(previousPage == position)){
-            Log.d("DateLog", "UNDO pr: $previousPage, cu: $position")
-            previousPage = 250
-            Handler().postDelayed({
-                mainviewpager.setCurrentItem(250, false) }, 1)
-
-
-
-
-        }
-        else {
-            Log.d("DateLog", "pr: $previousPage, cu: $position")
-
-            var monthc = 0
-            var datec = 0
-            var string = ""
-            var date = Date()
-            date = currentpagedate.getTime()
-            var dayc = date.day-1
-
-            if(position > previousPage){
-                Log.d("DateLog", "+")
-                currentpagedate.add(Calendar.DATE, 1)
-                if(timetableDaysActivated[currentpagedate.time.day]==false){
-                    while(timetableDaysActivated[currentpagedate.time.day]!= true){
-                        currentpagedate.add(Calendar.DATE, 1)
-                        //date = currentpagedate.getTime()
-                        //dayc = date.day-1
-                    }
-                }
-            }
-            else{
-                Log.d("DateLog", "- : pr : $previousPage, cu : $position" )
-                currentpagedate.add(Calendar.DATE, -1)
-                if(timetableDaysActivated[currentpagedate.time.day] == false){
-                    while(timetableDaysActivated[currentpagedate.time.day] != true){
-                        currentpagedate.add(Calendar.DATE, -1)
-                    }
-                }
-            }
-            previousPage = position
-            dayc = currentpagedate.time.day
-            monthc = currentpagedate.time.month
-            datec = currentpagedate.time.date
-            string = "$datec $monthc, $dayc"
-            activity.ToolBar_Main.title = string
-            Log.d("DateLog", "$string")
-//            if (position > previousPage) {
-//                if (data == 7) data = 1
-//                else data++
-//                previousPage++
-//                currentpagedate.add(Calendar.DATE, 1)
-//                date = currentpagedate.getTime()
-//                dayc = date.day
-//                monthc = date.month
-//                datec = date.date
-//                string = "$datec $monthc, $dayc"
-//            } else {
-//                if (data == 1) data = 7
-//                else data--
-//                previousPage--
-//                currentpagedate.add(Calendar.DATE, -1)
-//                date = currentpagedate.getTime()
-//                dayc = date.day
-//                monthc = date.month
-//                datec = date.date
-//                string = "$datec $monthc, $dayc"
-//            }
-//            activity.ToolBar_Main.title = string
-//            Log.d("DateLog", "$string")
-        }
+private fun changeTitle(position: Int, activity : MainActivity){
+    if((previousPage == 0 && position == 250)||(previousPage == position)){
+        Log.d("DateLog", "UNDO pr: $previousPage, cu: $position")
+        previousPage = 250
+        Handler().postDelayed({mainviewpager.setCurrentItem(250, false) }, 1)
     }
+    else {
+        Log.d("DateLog", "pr: $previousPage, cu: $position")
 
+        var monthc = 0
+        var datec = 0
+        var string = ""
+        var date = Date()
+        date = currentpagedate.getTime()
+        var dayc = date.day-1
 
-
-
-
-//    class DayItem(val timetable : Array<String>): Item<GroupieViewHolder>(){
-//        override fun bind(viewHolder: GroupieViewHolder, position: Int) {
-//            //viewHolder.itemView.textView3.text = position.toString()
-//            val adapter = GroupAdapter<GroupieViewHolder>()
-//
-//
-//
-//            //val lol = AddLessonActivity.hometaskitem("Заголовок","Контент","cheburek")
-//            timetable.forEach {
-//                adapter.add(LessonItem(it.toString()){})
-//                Log.d("DBlog", "Адаптер есть1")
-//            }
-//
-//            Log.d("DBlog", "Адаптер есть2")
-//
-//            viewHolder.itemView.recycleview_TimetableFragment.adapter=adapter
-//
-//            adapter.setOnItemClickListener(OnItemClickListener { item, view ->
-//                //Toast.makeText(this@MainFragment, "Пожалуйста, введите недостающие данные", Toast.LENGTH_SHORT).show()
-//                Log.d("DBlog", "HHHHHHHH")
-//            })
-//
-//
-////            viewHolder.itemView.recyclerView_Timetable.setOnClickListener {
-////                Log.d("RecyclerLog", "Clicked : $it " )
-////            }
-////                Log.d("dd", "Clicked : $item")
-////                val bottom = view.findViewById<View>(R.id.layoutBottomSheet)
-////                val bottomSheetBehavior = BottomSheetBehavior.from(bottom)
-////                if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
-////                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-////                    // bottom_navigation.visibility = View.GONE
-////                    //bottom_navigation.animate().scaleX(0.toFloat()).scaleY(0.toFloat()).setDuration(1000).start()
-////                    //bottom_navigation.animate().y((bottom_navigation.height+coordinatorlayout.height).toFloat()).setDuration(1000).start()
-////                }
-////                else {
-////                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-////                    //bottom_navigation.visibility = View.VISIBLE
-////                }
-////            }
-//
-//
-//        }
-//
-//        override fun getLayout(): Int {
-//            return R.layout.day_fragment
-//        }
-//
-//        // override fun getItemCount(): Int = 1
-//    }
-
-
-
-//
-//    class LessonItem(val lesson : String, private val itemClickListener: (Int) -> Unit): Item<GroupieViewHolder>(){
-//        override fun bind(viewHolder: GroupieViewHolder, position: Int) {
-//            //Log.d("FireBaseLogging", "ONE")
-//            viewHolder.itemView.textView2.text = lesson
-//            //viewHolder.itemView.textView.text = hometaskitem.hometask.toString()
-////            viewHolder.itemView.setOnClickListener{
-////                Log.d("DBlog", "Clicked : ${it.toString()}")
-////            }
-//
-//        }
-//        private inner class ItemViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-//
-//            init {
-//                itemView.setOnClickListener {
-//                    Log.d("logi", "Click!") // WORKS!!!
-//                    itemClickListener(adapterPosition)
-//                }
-//            }
-//        }
-//
-//        override fun isClickable() = true
-//        override fun getLayout(): Int {
-//            //Log.d("FireBaseLogging", "TWO")
-//            return R.layout.lesson_row
-//        }
-//    }
-
-
-
-//}
+        if(position > previousPage){
+            Log.d("DateLog", "+")
+            currentpagedate.add(Calendar.DATE, 1)
+            if(timetableDaysActivated[currentpagedate.time.day]==false){
+                while(timetableDaysActivated[currentpagedate.time.day]!= true){
+                    currentpagedate.add(Calendar.DATE, 1)
+                }
+            }
+        }
+        else{
+            Log.d("DateLog", "- : pr : $previousPage, cu : $position" )
+            currentpagedate.add(Calendar.DATE, -1)
+            if(timetableDaysActivated[currentpagedate.time.day] == false){
+                while(timetableDaysActivated[currentpagedate.time.day] != true){
+                    currentpagedate.add(Calendar.DATE, -1)
+                }
+            }
+        }
+        previousPage = position
+        dayc = currentpagedate.time.day
+        monthc = currentpagedate.time.month
+        datec = currentpagedate.time.date
+        string = "$datec $monthc, $dayc"
+        activity.ToolBar_Main.title = string
+        Log.d("DateLog", "$string")
+    }
+}

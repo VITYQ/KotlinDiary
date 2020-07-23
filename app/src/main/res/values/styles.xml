@@ -41,13 +41,51 @@
 
 
 
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="colorPrimary">#fffbe6</item>
+        <item name="colorPrimaryDark">#ccc8b4</item>
+        <item name="colorSecondary">#c1ccff</item>
+        <item name="colorBackgroundFloating">#000000</item>
+        <item name="colorSurface">#fffbe6</item>
+<!--        <item name="colorSurface">#fff3c1</item>-->
+        <item name="colorError">#B00020</item>
+        <item name="colorOnPrimary">#356859</item>
+        <item name="colorOnSecondary">#356859</item>
+        <item name="colorOnSurface">#356859</item>
+
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.MyApp.SmallComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.MyApp.MediumComponent</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.MyApp.LargeComponent</item>
+<!--        <item name="colorAccent">@color/colorAccent</item>-->
     </style>
 
+    <style name="ShapeAppearance.MyApp.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">4dp</item>
+    </style>
+
+    <style name="ShapeAppearance.MyApp.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
+    <style name="ShapeAppearance.MyApp.LargeComponent" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">24dp</item>
+    </style>
+
+    <style name="ShapeAppearanceOverLay.MyApp.MaterialBottomSheet" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+
+<!--    <style name="ToolbarTheme" parent="Widget.MaterialComponents.Toolbar.Primary">-->
+
+<!--    </style>-->
+<!--    FFFBE6-->
     <style name="AppTheme.NoActionBar" parent="Theme.MaterialComponents.NoActionBar.Bridge">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

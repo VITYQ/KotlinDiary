@@ -47,7 +47,7 @@ class ChooseSchoolActivity : AppCompatActivity() {
         val ref = FirebaseDatabase.getInstance().getReference("/schools")
 
         Log.d("FireBaseLogging", "Here")
-        ref.addListenerForSingleValueEvent(object : ValueEventListener{
+        ref.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(p0 : DataSnapshot){
                 val adapter = GroupAdapter<GroupieViewHolder>()
                 Log.d("FireBaseLogging", "Still here")

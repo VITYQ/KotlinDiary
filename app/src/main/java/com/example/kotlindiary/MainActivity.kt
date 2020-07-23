@@ -1,5 +1,6 @@
 package com.example.kotlindiary
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -11,6 +12,8 @@ import android.widget.LinearLayout
 import android.widget.Toolbar
 import androidx.appcompat.app.ActionBar
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.viewpager2.widget.ViewPager2
@@ -53,181 +56,189 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_coordinator)
-        val bottomSheetBehavior = BottomSheetBehavior.from(layoutBottomSheet)
-        var data = Date().day
-        when (data) {
-            1 -> ToolBar_Main.title = "Пн."
-            2 -> ToolBar_Main.title = "Вт."
-            3 -> ToolBar_Main.title = "Ср."
-            4 -> ToolBar_Main.title = "Чт."
-            5 -> ToolBar_Main.title = "Пт."
-            6 -> ToolBar_Main.title = "Сб."
-            7 -> ToolBar_Main.title = "Вс."
+        val uid = FirebaseAuth.getInstance().uid
+        if (uid == null){
+            val intent = Intent( this, RegisterActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
         }
-
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.frame_layout, MainFragment())
-            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-            .commit()
-
-//        viewpager_mainfragment.setOnClickListener {
-//            Log.d("DBLog", "Clicked MainActivity")
-//        }
-
-//        recycleview_TimetableFragment.setOnClickListener(object : View.OnClickListener{
-//            override fun onClick(v: View?) {
-//                Log.d("LogListener", "Clicked : $v")
-//            }
-//        })
-//        val bottomSheetBehavior = BottomSheetBehavior.from(addhometaskfragment)
-//        fab.setOnClickListener(){
-////            val intent = Intent(this, AddLessonActivity::class.java)
-////
-////            startActivity(intent)
-//            if(bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED){bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED}
-//            else{bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED}
-//        }
-        setSupportActionBar(findViewById(R.id.ToolBar_Main))
-        //ToolBar.setTitle("Расписание2")
-        //ToolBar_Main.title = "Расписание1"
-        //ToolBar_Main.title = "Заголовок"
-        //fetchHomework()
-        //verifyIsUserLoggedIn()
-        //fetchHomework()
-//        val string = arrayOf<String>("dgsg", "fsdgdsfg")
-//        val adapter = GroupAdapter<GroupieViewHolder>()
-//        adapter.add(DayItem(string))
-//        mainFragment.viewpager_main.adapter = adapter
-        //supportActionBar?.title = "Расписание"
-        val bar = actionBar
-        //bar?.title = "Расписание3"
-        var date = Date().time
-        date = date + 100000000
-        val year = Date(date).date
-
-        Log.d("Date", "year: ${Date()}")
-        //val adapter = GroupAdapter<GroupieViewHolder>()
-        //recycleview_timetable.adapter = adapter
+        else {
 
 
-
-
-//        val vPadapter = GroupAdapter<GroupieViewHolder>()
-//        for (i in 1..501){
-//            vPadapter.add(DayItem())
-////        }
-//        viewpager_main.adapter = vPadapter
-//        viewpager_main.setCurrentItem(251)
-
-//        fab.setOnClickListener(){
-//            vPadapter.add(DayItem())
-//        }
-        //Date createdAt = new Date()
-//        var data = Date().day
-//        //Log.d("Date", "$createdAt")
-//        val previousPage = 251
-
-//        viewpager_main.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback){
-//            override fun onPageSelected(position: Int){
-//                super .onPage
-//            }
-//        }
-        bottomSheetBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback(){
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                bottom_navigation.animate().y((coordinatorlayout.height-bottom_navigation.height+bottom_navigation.height*slideOffset).toFloat()).setDuration(0).start()
-            }
-
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-            }
-        })
-        bottom_navigation.setOnNavigationItemSelectedListener(BottomNavigationView.OnNavigationItemSelectedListener{
-            when(it.itemId){
-                bottom_navigation.selectedItemId -> {return@OnNavigationItemSelectedListener true}
-                R.id.one -> {
-
-                    supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.frame_layout, MainFragment())
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .commit()
-                    return@OnNavigationItemSelectedListener true
+                val bottomSheetBehavior = BottomSheetBehavior.from(layoutBottomSheet)
+                var data = Date().day
+                when (data) {
+                    1 -> ToolBar_Main.title = "Пн."
+                    2 -> ToolBar_Main.title = "Вт."
+                    3 -> ToolBar_Main.title = "Ср."
+                    4 -> ToolBar_Main.title = "Чт."
+                    5 -> ToolBar_Main.title = "Пт."
+                    6 -> ToolBar_Main.title = "Сб."
+                    7 -> ToolBar_Main.title = "Вс."
                 }
-                R.id.three -> {
-                    if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
-                        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                       // bottom_navigation.visibility = View.GONE
-                        //bottom_navigation.animate().scaleX(0.toFloat()).scaleY(0.toFloat()).setDuration(1000).start()
-                        //bottom_navigation.animate().y((bottom_navigation.height+coordinatorlayout.height).toFloat()).setDuration(1000).start()
+
+                supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.frame_layout, MainFragment())
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .commit()
+
+    //        viewpager_mainfragment.setOnClickListener {
+    //            Log.d("DBLog", "Clicked MainActivity")
+    //        }
+
+    //        recycleview_TimetableFragment.setOnClickListener(object : View.OnClickListener{
+    //            override fun onClick(v: View?) {
+    //                Log.d("LogListener", "Clicked : $v")
+    //            }
+    //        })
+    //        val bottomSheetBehavior = BottomSheetBehavior.from(addhometaskfragment)
+    //        fab.setOnClickListener(){
+    ////            val intent = Intent(this, AddLessonActivity::class.java)
+    ////
+    ////            startActivity(intent)
+    //            if(bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED){bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED}
+    //            else{bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED}
+    //        }
+                setSupportActionBar(findViewById(R.id.ToolBar_Main))
+                //ToolBar.setTitle("Расписание2")
+                //ToolBar_Main.title = "Расписание1"
+                //ToolBar_Main.title = "Заголовок"
+                //fetchHomework()
+                //verifyIsUserLoggedIn()
+                //fetchHomework()
+    //        val string = arrayOf<String>("dgsg", "fsdgdsfg")
+    //        val adapter = GroupAdapter<GroupieViewHolder>()
+    //        adapter.add(DayItem(string))
+    //        mainFragment.viewpager_main.adapter = adapter
+                //supportActionBar?.title = "Расписание"
+                val bar = actionBar
+                //bar?.title = "Расписание3"
+                var date = Date().time
+                date = date + 100000000
+                val year = Date(date).date
+
+                Log.d("Date", "year: ${Date()}")
+                //val adapter = GroupAdapter<GroupieViewHolder>()
+                //recycleview_timetable.adapter = adapter
+
+
+    //        val vPadapter = GroupAdapter<GroupieViewHolder>()
+    //        for (i in 1..501){
+    //            vPadapter.add(DayItem())
+    ////        }
+    //        viewpager_main.adapter = vPadapter
+    //        viewpager_main.setCurrentItem(251)
+
+    //        fab.setOnClickListener(){
+    //            vPadapter.add(DayItem())
+    //        }
+                //Date createdAt = new Date()
+    //        var data = Date().day
+    //        //Log.d("Date", "$createdAt")
+    //        val previousPage = 251
+
+    //        viewpager_main.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback){
+    //            override fun onPageSelected(position: Int){
+    //                super .onPage
+    //            }
+    //        }
+                bottomSheetBehavior.setBottomSheetCallback(object :
+                    BottomSheetBehavior.BottomSheetCallback() {
+                    override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                        bottom_navigation.animate()
+                            .y((coordinatorlayout.height - bottom_navigation.height + bottom_navigation.height * slideOffset).toFloat())
+                            .setDuration(0).start()
                     }
-                    else {
-                        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                        //bottom_navigation.visibility = View.VISIBLE
+
+                    override fun onStateChanged(bottomSheet: View, newState: Int) {
                     }
-                    return@OnNavigationItemSelectedListener true
-                }
-                R.id.two -> {
-                    supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.frame_layout, SettingsFragment())
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .commit()
-                    return@OnNavigationItemSelectedListener true
-                }
-            }
-            false
-        })
+                })
+                bottom_navigation.setOnNavigationItemSelectedListener(BottomNavigationView.OnNavigationItemSelectedListener {
+                    when (it.itemId) {
+                        bottom_navigation.selectedItemId -> {
+                            return@OnNavigationItemSelectedListener true
+                        }
+                        R.id.one -> {
+
+                            supportFragmentManager
+                                .beginTransaction()
+                                .replace(R.id.frame_layout, MainFragment())
+                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                                .commit()
+                            return@OnNavigationItemSelectedListener true
+                        }
+                        R.id.two -> {
+                            supportFragmentManager
+                                .beginTransaction()
+                                .replace(R.id.frame_layout, SettingsFragment())
+                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                                .commit()
+                            return@OnNavigationItemSelectedListener true
+                        }
+                        R.id.three -> {
+                            ToolBar_Main.title = "Настройки"
+                            supportFragmentManager
+                                .beginTransaction()
+                                .replace(R.id.frame_layout, SettingsFragment())
+                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                                .commit()
+                            return@OnNavigationItemSelectedListener true
+                        }
+                    }
+                    false
+                })
 
 
-
-//        mainFragment.viewpager_mainfragment.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
-//            override fun onPageSelected(position: Int) {
-//                Log.d("DBlog", position.toString())
-//                super.onPageSelected(position)
-//                if (position > previousPage){
-//                    if(data == 7) data = 1
-//                    else data++
-//                }
-//                else{
-//                    if(data == 1) data = 7
-//                    else data--
-//                }
-//                when (data) {
-//                    1 -> ToolBar_Main.title = "Пн."
-//                    2 -> ToolBar_Main.title = "Вт."
-//                    3 -> ToolBar_Main.title = "Ср."
-//                    4 -> ToolBar_Main.title = "Чт."
-//                    5 -> ToolBar_Main.title = "Пт."
-//                    6 -> ToolBar_Main.title = "Сб."
-//                    7 -> ToolBar_Main.title = "Вс."
-//                }
-//            }
-//        })
-//        viewpager_mainfragment.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
-//            override fun onPageSelected(position: Int) {
-//                Log.d("DBlog", position.toString())
-//                super.onPageSelected(position)
-//                if (position > previousPage){
-//                    if(data == 7) data = 1
-//                    else data++
-//                }
-//                else{
-//                    if(data == 1) data = 7
-//                    else data--
-//                }
-//                when (data) {
-//                    1 -> ToolBar_Main.title = "Пн."
-//                    2 -> ToolBar_Main.title = "Вт."
-//                    3 -> ToolBar_Main.title = "Ср."
-//                    4 -> ToolBar_Main.title = "Чт."
-//                    5 -> ToolBar_Main.title = "Пт."
-//                    6 -> ToolBar_Main.title = "Сб."
-//                    7 -> ToolBar_Main.title = "Вс."
-//                }
-//            }
-//        })
-//
-        //fetchHomework()
+    //        mainFragment.viewpager_mainfragment.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
+    //            override fun onPageSelected(position: Int) {
+    //                Log.d("DBlog", position.toString())
+    //                super.onPageSelected(position)
+    //                if (position > previousPage){
+    //                    if(data == 7) data = 1
+    //                    else data++
+    //                }
+    //                else{
+    //                    if(data == 1) data = 7
+    //                    else data--
+    //                }
+    //                when (data) {
+    //                    1 -> ToolBar_Main.title = "Пн."
+    //                    2 -> ToolBar_Main.title = "Вт."
+    //                    3 -> ToolBar_Main.title = "Ср."
+    //                    4 -> ToolBar_Main.title = "Чт."
+    //                    5 -> ToolBar_Main.title = "Пт."
+    //                    6 -> ToolBar_Main.title = "Сб."
+    //                    7 -> ToolBar_Main.title = "Вс."
+    //                }
+    //            }
+    //        })
+    //        viewpager_mainfragment.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
+    //            override fun onPageSelected(position: Int) {
+    //                Log.d("DBlog", position.toString())
+    //                super.onPageSelected(position)
+    //                if (position > previousPage){
+    //                    if(data == 7) data = 1
+    //                    else data++
+    //                }
+    //                else{
+    //                    if(data == 1) data = 7
+    //                    else data--
+    //                }
+    //                when (data) {
+    //                    1 -> ToolBar_Main.title = "Пн."
+    //                    2 -> ToolBar_Main.title = "Вт."
+    //                    3 -> ToolBar_Main.title = "Ср."
+    //                    4 -> ToolBar_Main.title = "Чт."
+    //                    5 -> ToolBar_Main.title = "Пт."
+    //                    6 -> ToolBar_Main.title = "Сб."
+    //                    7 -> ToolBar_Main.title = "Вс."
+    //                }
+    //            }
+    //        })
+    //
+                //fetchHomework()
+        }
 
     }
 
@@ -385,7 +396,7 @@ class MainActivity : AppCompatActivity() {
 //    private fun verifyIsUserLoggedIn(){
 //        val uid = FirebaseAuth.getInstance().uid
 //        if (uid == null){
-//            val intent = Intent(this , RegisterActivity::class.java)
+//            val intent = Intent( this, RegisterActivity::class.java)
 //            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
 //            startActivity(intent)
 //        }
