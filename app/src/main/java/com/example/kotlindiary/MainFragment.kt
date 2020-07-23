@@ -145,7 +145,7 @@ public fun downloadHomework(){
                                 timetable[key].add(it.value.toString())
                             }
                         }
-
+//
                     }
                     val arrayfortimetable : Array<MutableList<String>> = makeIntForTimetableAdapter()
                     if(schoolName != null && form != null){
