@@ -70,8 +70,16 @@ class MainFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
 
+    ): View? {
+        data = Date().day-1
+        previousPage = 0
+        timetableDaysActivated = booleanArrayOf(false, false, false, false, false, false, false)
+        year = Date().year
+        month = Date().month
+        date = Date().date
+        day = Date().day
+        currentpagedate = Calendar.getInstance()
         //bottomsheet = BottomSheetBehavior.from(layoutBottomSheet)
         return inflater.inflate(R.layout.fragment_main, container, false)
     }

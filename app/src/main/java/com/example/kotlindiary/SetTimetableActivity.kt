@@ -43,38 +43,48 @@ import kotlin.coroutines.coroutineContext
 class SetTimetableActivity : AppCompatActivity() {
 
 var positionviewpager = 0
-var array = Array(7, { mutableListOf<String>()})
+var array = Array(7, {mutableListOf<String>()})
 var schoolName : String = ""
 var form : String = ""
 val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
+    val adapter = ViewPager2Adapter(array)
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_set_timetable)
         Log.d("Checkarray", dayvalues[3].toString())
+        //val adapter = ViewPager2Adapter(array)
+        viewPager2_timetableq.adapter = adapter
+
+
         if(intent.getStringExtra("schoolName") == null || intent.getStringExtra("form") == null){
             val uid = FirebaseAuth.getInstance().uid
             val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
-            //schoolName = ref.get
             ref.addListenerForSingleValueEvent(object : ValueEventListener{
                 override fun onDataChange(p0: DataSnapshot) {
                     Log.d("DBLog", p0.child("form").getValue().toString())
                     schoolName = p0.child("school").getValue().toString()
                     form = p0.child("form").getValue().toString()
+                    fetchTimetable(schoolName, form)
+
+                    Log.d("DBLoggging", "10 ${form}, $schoolName")
                 }
 
                 override fun onCancelled(p0: DatabaseError) {
 
                 }
             })
+
         }
         else{
             schoolName = intent.getStringExtra("schoolName")
             form = intent.getStringExtra("form")
+            fetchTimetable(schoolName, form)
+
+            Log.d("DBLoggging", "11 ${form}, $schoolName")
         }
-
-
-
 
         var monday = emptyArray<String>()
         var tuesday = emptyArray<String>()
@@ -84,31 +94,20 @@ val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
         var saturday = emptyArray<String>()
         var sunday = emptyArray<String>()
 
-//        array[3].add("DDDD")
-//
-//        array[3].add("DDDD")
-//        //Log.d("loggggi", array[3][1])
-//        Log.d("loggggi", array[3].size.toString())
-//        Log.d("loggggi", array[0].size.toString())
         val bottomsheet = BottomSheetBehavior.from(layoutBottomSheet_Timetable)
 
         floatac.setOnClickListener{
             Log.d("clicked", "clicked")
             if (bottomsheet.state == BottomSheetBehavior.STATE_COLLAPSED) {
                 bottomsheet.state = BottomSheetBehavior.STATE_EXPANDED
-//                buttonBottomSheet.setOnClickListener {
-//                    bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED
-//                }
-
             }
             else {
                 bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED
-
             }
         }
 
-        val adapter = ViewPager2Adapter(array)
-        viewPager2_timetableq.adapter = adapter
+
+
 
 
         button_AddToTimetable.setOnClickListener{
@@ -122,6 +121,7 @@ val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
                 else{
                     Toast.makeText(this, textInputLayout.editText?.text, Toast.LENGTH_SHORT).show()
                     array[positionviewpager].add(text.toString())
+                    Log.d("DBLoggging", "333: $positionviewpager")
                     adapter.notifyDataSetChanged()
                     bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED
                 }
@@ -201,13 +201,6 @@ val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
                     floatac.isClickable = true
                     //tab_Layout.animate().y(appbarlayout.height.toFloat()).setDuration(100).start()
                 }
-//                } else if (BottomSheetBehavior.STATE_COLLAPSED == newState) {
-//                    //floatac.animate().scaleX(1.toFloat()).scaleY(1.toFloat()).setDuration(100).start();
-//                    floatac.animate().scaleX(0.toFloat()).scaleY(0.toFloat()).setDuration(100).start()
-//                    Handler().postDelayed({floatac.setImageResource(R.drawable.ic_send_black_24dp) }, 100)
-//                    //floatac.setImageResource(R.drawable.ic_send_black_24dp)
-//                    floatac.animate().scaleX(1.toFloat()).scaleY(1.toFloat()).setDuration(100).start()
-//                }
             }
         })
         val itemnext = findViewById<View>(R.id.menu_next)
@@ -265,9 +258,6 @@ val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
         menuInflater.inflate(R.menu.reg_menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
-
-
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
             R.id.menu_next -> {
@@ -278,9 +268,6 @@ val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
         }
         return super.onOptionsItemSelected(item)
     }
-
-
-
     private fun uploadTimetable(timetable : Array<MutableList<String>>){
         val ref = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/$form/timetable")
         for(i in 0..6){
@@ -297,37 +284,53 @@ val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
         startActivity(intent)
     }
 
-
-    private fun up(){
-        //val string = arrayOf<String>("dgsg", "fsdgdsfg")
-        val adapter = GroupAdapter<GroupieViewHolder>()
-        adapter.add(timetableDayItem())
-        adapter.add(timetableDayItem())
-        val view = findViewById<View>(R.id.viewPager2_timetableq)
-        viewPager2_timetableq.adapter = adapter
-    }
-
-    private fun fetchTimetable(schoolName : String, form : String){
-        val adapter = GroupAdapter<GroupieViewHolder>()
-        val ref = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/$form/timetable")
-        ref.addValueEventListener(object : ValueEventListener{
+    private fun fetchTimetable(schoolNameIn : String, formIn : String){
+        Log.d("DBLoggging", "2 ${formIn}, $schoolNameIn")
+        val ref = FirebaseDatabase.getInstance().getReference("/schools/$schoolNameIn/$formIn/timetable")
+        ref.addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onDataChange(p0: DataSnapshot) {
-                p0.children.forEach(){
-                    val lesson = it.child("lessonName").getValue().toString()
-                    Log.d("DBLog", it.toString())
-                    adapter.add(lessonItem(lesson))
+                p0.children.forEach {
+                    Log.d("DBLoggging", it.key)
+                    var keyPos = it.key?.toInt()
+                    if(keyPos!=null) {
+
+                        it.children.forEach {
+                            Log.d("DBLoggging", it.value.toString())
+                            array[keyPos-1].add(it.value.toString())
+                        }
+
+                    }
                 }
+                //val adapter = ViewPager2Adapter(array)
+                viewPager2_timetableq.adapter = adapter
+                adapter.notifyDataSetChanged()
             }
-
-            override fun onCancelled(p0: DatabaseError) {
-
-            }
+            override fun onCancelled(p0: DatabaseError) {}
         })
-       // recyclerView_Timetable.adapter = adapter
-
-
-
+        //val adapter = ViewPager2Adapter(array)
+        //viewPager2_timetableq.adapter = adapter
     }
+
+
+
+
+//    private fun fetchTimetable(schoolName : String, form : String){
+//        val adapter = GroupAdapter<GroupieViewHolder>()
+//        val ref = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/$form/timetable")
+//        ref.addValueEventListener(object : ValueEventListener{
+//            override fun onDataChange(p0: DataSnapshot) {
+//                p0.children.forEach(){
+//                    val lesson = it.child("lessonName").getValue().toString()
+//                    Log.d("DBLog", it.toString())
+//                    adapter.add(lessonItem(lesson))
+//                }
+//            }
+//
+//            override fun onCancelled(p0: DatabaseError) {
+//
+//            }
+//        })
+//    }
 
 
     class ViewPager2Adapter(val string : Array<MutableList<String>>) : RecyclerView.Adapter<ViewPager2Adapter.ViewHolder>(){
@@ -399,31 +402,13 @@ val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
                 itemView.setOnLongClickListener(object : View.OnLongClickListener{
                     override fun onLongClick(v: View?): Boolean {
 
-                        //Log.d("logi", "Long click at ${itemView.textView_SchoolName.text}")
+                        Log.d("logi", "Long click at ${itemView.textView_SchoolName.text}")
                         return true
                     }
                 })
             }
         }
     }
-
-    class timetableDayItem() : Item<GroupieViewHolder>(){
-        override fun getLayout() = R.layout.day_fragment
-        override fun bind(viewHolder: GroupieViewHolder, position: Int) {
-            val adapter = GroupAdapter<GroupieViewHolder>()
-            adapter.add(lessonItem("hello"))
-            adapter.add(lessonItem("World"))
-            viewHolder.itemView.recycleview_TimetableFragment.adapter = adapter
-        }
-    }
-
-    class lessonItem(val lessonName : String) : Item<GroupieViewHolder>(){
-        override fun getLayout() = R.layout.schools_row
-        override fun bind(viewHolder: GroupieViewHolder, position: Int) {
-            viewHolder.itemView.textView_SchoolName.text = lessonName
-        }
-    }
-
 
 
 }
