@@ -42,12 +42,14 @@ import kotlin.coroutines.coroutineContext
 
 class SetTimetableActivity : AppCompatActivity() {
 
+
 var positionviewpager = 0
 var array = Array(7, {mutableListOf<String>()})
 var schoolName : String = ""
 var form : String = ""
 val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
-    val adapter = ViewPager2Adapter(array)
+val adapter = ViewPager2Adapter(array)
+
 
 
 
@@ -254,10 +256,12 @@ val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
 
 
     }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.reg_menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
             R.id.menu_next -> {
@@ -268,8 +272,10 @@ val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
         }
         return super.onOptionsItemSelected(item)
     }
+
     private fun uploadTimetable(timetable : Array<MutableList<String>>){
         val ref = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/$form/timetable")
+        ref.removeValue() //Сначала удаляем расписание, после чего загружаем TODO: подумать, можно ли оптимизировать
         for(i in 0..6){
             for(k in 0..(array[i].size-1)){
                 ref.child(dayvalues[i].toString()).child(k.toString()).setValue(array[i][k])
@@ -285,7 +291,6 @@ val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
     }
 
     private fun fetchTimetable(schoolNameIn : String, formIn : String){
-        Log.d("DBLoggging", "2 ${formIn}, $schoolNameIn")
         val ref = FirebaseDatabase.getInstance().getReference("/schools/$schoolNameIn/$formIn/timetable")
         ref.addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onDataChange(p0: DataSnapshot) {
@@ -293,45 +298,19 @@ val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
                     Log.d("DBLoggging", it.key)
                     var keyPos = it.key?.toInt()
                     if(keyPos!=null) {
-
                         it.children.forEach {
                             Log.d("DBLoggging", it.value.toString())
-                            array[keyPos-1].add(it.value.toString())
+                            if(keyPos == 0){array[6].add(it.value.toString())}
+                            else{array[keyPos-1].add(it.value.toString())}
                         }
-
                     }
                 }
-                //val adapter = ViewPager2Adapter(array)
                 viewPager2_timetableq.adapter = adapter
                 adapter.notifyDataSetChanged()
             }
             override fun onCancelled(p0: DatabaseError) {}
         })
-        //val adapter = ViewPager2Adapter(array)
-        //viewPager2_timetableq.adapter = adapter
     }
-
-
-
-
-//    private fun fetchTimetable(schoolName : String, form : String){
-//        val adapter = GroupAdapter<GroupieViewHolder>()
-//        val ref = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/$form/timetable")
-//        ref.addValueEventListener(object : ValueEventListener{
-//            override fun onDataChange(p0: DataSnapshot) {
-//                p0.children.forEach(){
-//                    val lesson = it.child("lessonName").getValue().toString()
-//                    Log.d("DBLog", it.toString())
-//                    adapter.add(lessonItem(lesson))
-//                }
-//            }
-//
-//            override fun onCancelled(p0: DatabaseError) {
-//
-//            }
-//        })
-//    }
-
 
     class ViewPager2Adapter(val string : Array<MutableList<String>>) : RecyclerView.Adapter<ViewPager2Adapter.ViewHolder>(){
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewPager2Adapter.ViewHolder {
@@ -347,8 +326,11 @@ val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
             holder.itemView.recycleview_TimetableFragment.setOnClickListener {
                 Log.d("loggggi", "clicked")
             }
-//            val dec = DividerItemDecoration(holder.itemView.recycleview_TimetableFragment.context, 0)
-//            holder.itemView.recycleview_TimetableFragment.addItemDecoration(dec)
+            val dec = DividerItemDecoration(holder.itemView.recycleview_TimetableFragment.context, DividerItemDecoration.HORIZONTAL) //Вертикальный разделитель
+            holder.itemView.recycleview_TimetableFragment.addItemDecoration(dec)
+            val dec1 = DividerItemDecoration(holder.itemView.recycleview_TimetableFragment.context, DividerItemDecoration.VERTICAL) //Горизонтальный
+            holder.itemView.recycleview_TimetableFragment.addItemDecoration(dec1)
+            //holder.itemView.recycleview_TimetableFragment.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
         }
 
@@ -359,7 +341,6 @@ val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
 
 
     }
-
 
     class RecyclerViewAdapter(val string : MutableList<String>, private val itemClickListener: (Int) -> Unit) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>(){
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewAdapter.ViewHolder {
@@ -391,6 +372,8 @@ val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
                 }
             })
 
+
+
         }
 
         inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
@@ -409,6 +392,5 @@ val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
             }
         }
     }
-
 
 }

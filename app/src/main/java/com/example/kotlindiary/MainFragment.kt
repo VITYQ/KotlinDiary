@@ -3,8 +3,8 @@ package com.example.kotlindiary
 
 //import android.app.Fragment
 
-import android.os.Bundle
-import android.os.Handler
+import android.content.Context
+import android.os.*
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,6 +15,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.size
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -24,6 +25,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.kotlindiary.models.User
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.internal.ContextUtils.getActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -44,6 +46,7 @@ import kotlinx.android.synthetic.main.day_fragment.view.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.layout_bottom_sheet_main.*
 import kotlinx.android.synthetic.main.lesson_row.view.*
+import net.yslibrary.android.keyboardvisibilityevent.util.UIUtil
 import java.security.AccessController.getContext
 import java.util.*
 
@@ -64,6 +67,7 @@ var month = Date().month
 var date = Date().date
 var day = Date().day
 var currentpagedate = Calendar.getInstance()
+
 
 class MainFragment : Fragment() {
 
@@ -106,6 +110,7 @@ class MainFragment : Fragment() {
                 val activity = activity as MainActivity
                 Log.d("ChangeTitle", "ChangeCallback: $position")
                 changeTitle(position, activity)
+                vibratePhoneClick()
                 bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED
             }
         })
@@ -201,6 +206,10 @@ class ViewPager2Adapter(val arrayfortimetable : Array<MutableList<String>>, val 
 
             val adapter = RecyclerViewAdapter(arrayfortimetable[position][1],timetable[arrayfortimetable[position][0].toInt()], hometask, school, form){}
             holder.itemView.recycleview_TimetableFragment.adapter = adapter
+            val dec = DividerItemDecoration(holder.itemView.recycleview_TimetableFragment.context, DividerItemDecoration.HORIZONTAL) //Вертикальный разделитель
+            holder.itemView.recycleview_TimetableFragment.addItemDecoration(dec)
+            val dec1 = DividerItemDecoration(holder.itemView.recycleview_TimetableFragment.context, DividerItemDecoration.VERTICAL) //Горизонтальный
+            holder.itemView.recycleview_TimetableFragment.addItemDecoration(dec1)
             //holder.itemView.recycleview_TimetableFragment.addItemDecoration(DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL))
 //            holder.itemView.recycleview_TimetableFragment.setOnClickListener {
 //                Log.d("logi", "Click inside bind")
@@ -263,8 +272,11 @@ class RecyclerViewAdapter(val date : String,val timetable : MutableList<String>,
                 val view = it
                 if (bottomsheet.state == BottomSheetBehavior.STATE_COLLAPSED) {
                     bottomsheet.state = BottomSheetBehavior.STATE_EXPANDED
+                    UIUtil.showKeyboard(holder.itemView.context, editTextBottomSheet) //TODO: разобраться с клавиатурой
                     buttonBottomSheet.setOnClickListener{
                         bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED
+                        //vibratePhoneClick()
+                        UIUtil.hideKeyboard(holder.itemView.context, editTextBottomSheet)
                         Log.d("DBLog", "clicked bottom sheet button at ${view.textView2.text}")
                         //mainviewpager.setCurrentItem(250)
                         var date = Date()
@@ -336,6 +348,24 @@ fun makeIntForTimetableAdapter() : Array<MutableList<String>>{
         return arrayint
     }
 
+//public fun Fragment.vibratePhoneClick(){
+//    val vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+//    if (Build.VERSION.SDK_INT >= 29) {
+//        //vibrator.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.EFFECT_CLICK))
+//        vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK))
+//    } else {
+//        vibrator.vibrate(20)
+//    }
+//}
+public fun Fragment.vibratePhoneClick(){
+    val vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    if (Build.VERSION.SDK_INT >= 29) {
+        //vibrator.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.EFFECT_CLICK))
+        vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK))
+    } else {
+        vibrator.vibrate(20)
+    }
+}
 
 private fun changeTitle(position: Int, activity : MainActivity){
     if((previousPage == 0 && position == 250)||(previousPage == position)){
