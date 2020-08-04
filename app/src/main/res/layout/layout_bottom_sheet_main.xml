@@ -11,6 +11,7 @@
     style="@style/ShapeAppearanceOverLay.MyApp.MaterialBottomSheet"
     app:behavior_hideable="true"
     app:behavior_peekHeight="0dp"
+    app:behavior_skipCOllapsed="true"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
 

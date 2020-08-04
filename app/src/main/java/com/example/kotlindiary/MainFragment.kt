@@ -110,7 +110,7 @@ class MainFragment : Fragment() {
                 val activity = activity as MainActivity
                 Log.d("ChangeTitle", "ChangeCallback: $position")
                 changeTitle(position, activity)
-                vibratePhoneClick()
+
                 bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED
             }
         })
@@ -193,17 +193,9 @@ class ViewPager2Adapter(val arrayfortimetable : Array<MutableList<String>>, val 
         override fun getItemCount(): Int = 500
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-
-
             for(i in 250..270){
                 Log.d("LogAdapter", "i: $i, ${arrayfortimetable[i]}")
             }
-
-
-
-
-
-
             val adapter = RecyclerViewAdapter(arrayfortimetable[position][1],timetable[arrayfortimetable[position][0].toInt()], hometask, school, form){}
             holder.itemView.recycleview_TimetableFragment.adapter = adapter
             val dec = DividerItemDecoration(holder.itemView.recycleview_TimetableFragment.context, DividerItemDecoration.HORIZONTAL) //Вертикальный разделитель
@@ -269,16 +261,19 @@ class RecyclerViewAdapter(val date : String,val timetable : MutableList<String>,
 //            }
             holder.itemView.setOnClickListener {
                 Log.d("logi", "Click RecyclerView bind! Name : ${it.textView2.text}" )
+                it.context.vibratePhoneClick()
                 val view = it
-                if (bottomsheet.state == BottomSheetBehavior.STATE_COLLAPSED) {
-                    bottomsheet.state = BottomSheetBehavior.STATE_EXPANDED
+                Log.d("asdf", bottomsheet.state.toString())
+                if (bottomsheet.state == BottomSheetBehavior.STATE_COLLAPSED || bottomsheet.state == BottomSheetBehavior.STATE_HIDDEN) {
+                    //bottomsheet.state = BottomSheetBehavior.STATE_EXPANDED
+                    bottomsheet.setState(BottomSheetBehavior.STATE_EXPANDED)
                     UIUtil.showKeyboard(holder.itemView.context, editTextBottomSheet) //TODO: разобраться с клавиатурой
                     buttonBottomSheet.setOnClickListener{
-                        bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED
-                        //vibratePhoneClick()
                         UIUtil.hideKeyboard(holder.itemView.context, editTextBottomSheet)
-                        Log.d("DBLog", "clicked bottom sheet button at ${view.textView2.text}")
-                        //mainviewpager.setCurrentItem(250)
+                        Log.d("asdf", bottomsheet.state.toString())
+                        //bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED  //TODO: разобраться с багом bottomappbar
+                        bottomsheet.setState(BottomSheetBehavior.STATE_COLLAPSED)
+                        Log.d("asdf", bottomsheet.state.toString())
                         var date = Date()
                         date = currentpagedate.getTime()
                         val ddate = date.date
@@ -295,8 +290,8 @@ class RecyclerViewAdapter(val date : String,val timetable : MutableList<String>,
 
                 }
                 else {
-                    bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED
-
+                    //bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED
+                    bottomsheet.setState(BottomSheetBehavior.STATE_COLLAPSED)
                 }
             }
         }
@@ -357,9 +352,10 @@ fun makeIntForTimetableAdapter() : Array<MutableList<String>>{
 //        vibrator.vibrate(20)
 //    }
 //}
-public fun Fragment.vibratePhoneClick(){
-    val vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+public fun Context.vibratePhoneClick(){
+    val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     if (Build.VERSION.SDK_INT >= 29) {
+        Log.d("vibrator","vibrator")
         //vibrator.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.EFFECT_CLICK))
         vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK))
     } else {
