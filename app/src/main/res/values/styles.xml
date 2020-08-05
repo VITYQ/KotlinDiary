@@ -43,17 +43,26 @@
 
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
-
-        <item name="colorPrimary">#D81B60</item>
-        <item name="colorPrimaryDark">#ccc8b4</item>
+        <item name="colorPrimary">#000000</item>
+        <item name="colorPrimaryDark">#d4d4d4</item>
         <item name="colorSecondary">#c1ccff</item>
-        <item name="colorBackgroundFloating">#fffbe6</item>
-        <item name="colorSurface">#fffbe6</item>
-<!--        <item name="colorSurface">#fff3c1</item>-->
+        <item name="colorBackgroundFloating">#ffffff</item>
+        <item name="colorSurface">#ffffff</item>
+        <!--        <item name="colorSurface">#fff3c1</item>-->
         <item name="colorError">#B00020</item>
         <item name="colorOnPrimary">#356859</item>
         <item name="colorOnSecondary">#356859</item>
         <item name="colorOnSurface">#356859</item>
+<!--        <item name="colorPrimary">#D81B60</item>-->
+<!--        <item name="colorPrimaryDark">#ccc8b4</item>-->
+<!--        <item name="colorSecondary">#c1ccff</item>-->
+<!--        <item name="colorBackgroundFloating">#fffbe6</item>-->
+<!--        <item name="colorSurface">#fffbe6</item>-->
+<!--&lt;!&ndash;        <item name="colorSurface">#fff3c1</item>&ndash;&gt;-->
+<!--        <item name="colorError">#B00020</item>-->
+<!--        <item name="colorOnPrimary">#356859</item>-->
+<!--        <item name="colorOnSecondary">#356859</item>-->
+<!--        <item name="colorOnSurface">#356859</item>-->
 
         <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.MyApp.SmallComponent</item>
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.MyApp.MediumComponent</item>
@@ -62,12 +71,12 @@
     </style>
 
     <style name="ShapeAppearance.MyApp.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
-        <item name="cornerFamily">cut</item>
+        <item name="cornerFamily">rounded</item>
         <item name="cornerSize">4dp</item>
     </style>
 
     <style name="ShapeAppearance.MyApp.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
-        <item name="cornerFamily">cut</item>
+        <item name="cornerFamily">rounded</item>
         <item name="cornerSize">8dp</item>
     </style>
 

@@ -170,9 +170,8 @@ public fun downloadHomework(){
                         var adapter = ViewPager2Adapter(arrayfortimetable, timetable,arrayHometask, schoolName, form){}
                         //adapter.notifyDataSetChanged()
                         mainviewpager.adapter = adapter
-                        TabLayoutMediator(tabLayoutFragment, mainviewpager){tab, position ->
-                            tab.text = "3"
-                        }.attach()
+                        adapterTabLayout()
+
                     }
                     for(i in 0..6){
                         timetable[i].forEach{
@@ -206,10 +205,10 @@ class ViewPager2Adapter(val arrayfortimetable : Array<MutableList<String>>, val 
             }
             val adapter = RecyclerViewAdapter(arrayfortimetable[position][1],timetable[arrayfortimetable[position][0].toInt()], hometask, school, form){}
             holder.itemView.recycleview_TimetableFragment.adapter = adapter
-            val dec = DividerItemDecoration(holder.itemView.recycleview_TimetableFragment.context, DividerItemDecoration.HORIZONTAL) //Вертикальный разделитель
-            holder.itemView.recycleview_TimetableFragment.addItemDecoration(dec)
-            val dec1 = DividerItemDecoration(holder.itemView.recycleview_TimetableFragment.context, DividerItemDecoration.VERTICAL) //Горизонтальный
-            holder.itemView.recycleview_TimetableFragment.addItemDecoration(dec1)
+//            val dec = DividerItemDecoration(holder.itemView.recycleview_TimetableFragment.context, DividerItemDecoration.HORIZONTAL) //Вертикальный разделитель
+//            holder.itemView.recycleview_TimetableFragment.addItemDecoration(dec)
+//            val dec1 = DividerItemDecoration(holder.itemView.recycleview_TimetableFragment.context, DividerItemDecoration.VERTICAL) //Горизонтальный
+//            holder.itemView.recycleview_TimetableFragment.addItemDecoration(dec1)
             //holder.itemView.recycleview_TimetableFragment.addItemDecoration(DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL))
 //            holder.itemView.recycleview_TimetableFragment.setOnClickListener {
 //                Log.d("logi", "Click inside bind")
@@ -238,7 +237,8 @@ class RecyclerViewAdapter(val date : String,val timetable : MutableList<String>,
         val items = mutableListOf<Any>()
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
-            ItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.lesson_row, parent, false))
+            ItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.lesson_item_card, parent, false))
+            //ItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.lesson_row, parent, false))
 
         override fun getItemCount(): Int = timetable.size
 
@@ -351,31 +351,92 @@ fun makeIntForTimetableAdapter() : Array<MutableList<String>>{
         return arrayint
     }
 
-//public fun Fragment.vibratePhoneClick(){
-//    val vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-//    if (Build.VERSION.SDK_INT >= 29) {
-//        //vibrator.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.EFFECT_CLICK))
-//        vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK))
-//    } else {
-//        vibrator.vibrate(20)
-//    }
-//}
-public fun Context.vibratePhoneClick(){
-    val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-    if (Build.VERSION.SDK_INT >= 29) {
-        Log.d("vibrator","vibrator")
-        //vibrator.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.EFFECT_CLICK))
-        vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK))
-    } else {
-        vibrator.vibrate(20)
+
+
+private fun adapterTabLayout(){
+    //var string : MutableList<String>
+    var string = Array (500, {""})
+    var calendarForAdapter = Calendar.getInstance()
+    for(i in 250..499){
+        if(timetableDaysActivated[calendarForAdapter.time.day] == false){
+            while(timetableDaysActivated[calendarForAdapter.time.day]!=true){
+                calendarForAdapter.add(Calendar.DATE, 1)
+            }
+        }
+            var tmp = "${calendarForAdapter.time.day}"
+            when(tmp.toInt()){
+                1 -> tmp = "ПОНЕДЕЛЬНИК"
+                2 -> tmp = "ВТОРНИК"
+                3 -> tmp = "СРЕДА"
+                4 -> tmp = "ЧЕТВЕРГ"
+                5 -> tmp = "ПЯТНИЦА"
+                6 -> tmp = "СУББОТА"
+                0 -> tmp = "ВОСКРЕСЕНЬЕ"
+            }
+            string[i] = "${calendarForAdapter.time.date} $tmp"
+            calendarForAdapter.add(Calendar.DATE, 1)
+
     }
+    calendarForAdapter = Calendar.getInstance()
+    calendarForAdapter.add(Calendar.DATE, -1)
+    for(i in 249 downTo 0){
+        if(timetableDaysActivated[calendarForAdapter.time.day] == false){
+            while(timetableDaysActivated[calendarForAdapter.time.day]!=true){
+                calendarForAdapter.add(Calendar.DATE, -1)
+            }
+        }
+
+            var tmp = "${calendarForAdapter.time.day}"
+            when(tmp.toInt()){
+                1 -> tmp = "ПОНЕДЕЛЬНИК"
+                2 -> tmp = "ВТОРНИК"
+                3 -> tmp = "СРЕДА"
+                4 -> tmp = "ЧЕТВЕРГ"
+                5 -> tmp = "ПЯТНИЦА"
+                6 -> tmp = "СУББОТА"
+                0 -> tmp = "ВОСКРЕСЕНЬЕ"
+            }
+            string[i] = "${calendarForAdapter.time.date}   $tmp"
+            calendarForAdapter.add(Calendar.DATE, -1)
+
+    }
+    TabLayoutMediator(tabLayoutFragment, mainviewpager){tab, position ->
+        tab.text = string[position]
+        Log.d("lololo", "${string[position]}, $position")
+    }.attach()
 }
 
-private fun changeTitle(position: Int, activity : MainActivity){
+
+private fun changeTitle(position: Int, activity : MainActivity){//меняем title и дату конкретного item во viewpager
     if((previousPage == 0 && position == 250)||(previousPage == position)){
         Log.d("DateLog", "UNDO pr: $previousPage, cu: $position")
         previousPage = 250
         Handler().postDelayed({mainviewpager.setCurrentItem(250, false) }, 1)
+        Log.d("DateLog", "current position: ${mainviewpager.currentItem}")
+        if(timetableDaysActivated[currentpagedate.time.day]==false){
+            while(timetableDaysActivated[currentpagedate.time.day]!= true){
+                currentpagedate.add(Calendar.DATE, 1)
+            }
+        }
+        var string = ""
+        var monthc = currentpagedate.time.month
+        var datec = currentpagedate.time.date
+        when(monthc){
+            0 -> string = "Январь"
+            1 -> string = "Февраль"
+            2 -> string = "Март"
+            3 -> string = "Апрель"
+            4 -> string = "Май"
+            5 -> string = "Июнь"
+            6 -> string = "Июль"
+            7 -> string = "Август"
+            8 -> string = "Сентябрь"
+            9 -> string = "Октябрь"
+            10 -> string = "Ноябрь"
+            11 -> string = "Декабрь"
+        }
+        Log.d("DateLog", "month: $monthc, date: $datec")
+        activity.ToolBar_Main.title = string
     }
     else {
         Log.d("DateLog", "pr: $previousPage, cu: $position")
@@ -389,19 +450,44 @@ private fun changeTitle(position: Int, activity : MainActivity){
 
         if(position > previousPage){
             Log.d("DateLog", "+")
-            currentpagedate.add(Calendar.DATE, 1)
-            if(timetableDaysActivated[currentpagedate.time.day]==false){
-                while(timetableDaysActivated[currentpagedate.time.day]!= true){
+            if(position-previousPage>1){//если пролистнули больше 1й страницы
+                for(i in 1..(position- previousPage)){
                     currentpagedate.add(Calendar.DATE, 1)
+                    if(timetableDaysActivated[currentpagedate.time.day]==false){//проверяем, существует ли день в расписании
+                        while(timetableDaysActivated[currentpagedate.time.day]!= true){//если нет, +1 день
+                            currentpagedate.add(Calendar.DATE, 1)
+                        }
+                    }
                 }
             }
+            else{
+                currentpagedate.add(Calendar.DATE, 1)
+                if(timetableDaysActivated[currentpagedate.time.day]==false){
+                    while(timetableDaysActivated[currentpagedate.time.day]!= true){
+                        currentpagedate.add(Calendar.DATE, 1)
+                    }
+                }
+            }
+
         }
         else{
             Log.d("DateLog", "- : pr : $previousPage, cu : $position" )
-            currentpagedate.add(Calendar.DATE, -1)
-            if(timetableDaysActivated[currentpagedate.time.day] == false){
-                while(timetableDaysActivated[currentpagedate.time.day] != true){
+            if(position- previousPage<-1){
+                for(i in 1..-(position- previousPage)){
                     currentpagedate.add(Calendar.DATE, -1)
+                    if(timetableDaysActivated[currentpagedate.time.day]==false){//проверяем, существует ли день в расписании
+                        while(timetableDaysActivated[currentpagedate.time.day]!= true){//если нет, +1 день
+                            currentpagedate.add(Calendar.DATE, -1)
+                        }
+                    }
+                }
+            }
+            else{
+                currentpagedate.add(Calendar.DATE, -1)
+                if(timetableDaysActivated[currentpagedate.time.day] == false){
+                    while(timetableDaysActivated[currentpagedate.time.day] != true){
+                        currentpagedate.add(Calendar.DATE, -1)
+                    }
                 }
             }
         }
@@ -409,8 +495,35 @@ private fun changeTitle(position: Int, activity : MainActivity){
         dayc = currentpagedate.time.day
         monthc = currentpagedate.time.month
         datec = currentpagedate.time.date
-        string = "$datec $monthc, $dayc"
+        when(monthc){
+            0 -> string = "Январь"
+            1 -> string = "Февраль"
+            2 -> string = "Март"
+            3 -> string = "Апрель"
+            4 -> string = "Май"
+            5 -> string = "Июнь"
+            6 -> string = "Июль"
+            7 -> string = "Август"
+            8 -> string = "Сентябрь"
+            9 -> string = "Октябрь"
+            10 -> string = "Ноябрь"
+            11 -> string = "Декабрь"
+        }
+        Log.d("DateLog", "month: $monthc, date: $datec")
+        //string = "$datec-$monthc-$dayc"
         activity.ToolBar_Main.title = string
         Log.d("DateLog", "$string")
+    }
+}
+
+
+fun Context.vibratePhoneClick(){
+    val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    if (Build.VERSION.SDK_INT >= 29) {
+        Log.d("vibrator","vibrator")
+        //vibrator.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.EFFECT_CLICK))
+        vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK))
+    } else {
+        vibrator.vibrate(20)
     }
 }
