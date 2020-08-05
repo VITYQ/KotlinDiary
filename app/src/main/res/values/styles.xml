@@ -44,10 +44,10 @@
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
 
-        <item name="colorPrimary">#fffbe6</item>
+        <item name="colorPrimary">#D81B60</item>
         <item name="colorPrimaryDark">#ccc8b4</item>
         <item name="colorSecondary">#c1ccff</item>
-        <item name="colorBackgroundFloating">#000000</item>
+        <item name="colorBackgroundFloating">#fffbe6</item>
         <item name="colorSurface">#fffbe6</item>
 <!--        <item name="colorSurface">#fff3c1</item>-->
         <item name="colorError">#B00020</item>

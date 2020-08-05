@@ -26,6 +26,8 @@ import com.example.kotlindiary.models.User
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.internal.ContextUtils.getActivity
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -61,6 +63,7 @@ lateinit var mainviewpager : ViewPager2
 lateinit var bottomsheet : BottomSheetBehavior<ConstraintLayout>
 lateinit var buttonBottomSheet : Button
 lateinit var editTextBottomSheet: EditText
+lateinit var tabLayoutFragment : TabLayout
 var timetableDaysActivated = booleanArrayOf(false, false, false, false, false, false, false)
 var year = Date().year
 var month = Date().month
@@ -85,6 +88,7 @@ class MainFragment : Fragment() {
         day = Date().day
         currentpagedate = Calendar.getInstance()
         //bottomsheet = BottomSheetBehavior.from(layoutBottomSheet)
+        bottomsheet = BottomSheetBehavior.from((activity as MainActivity).layoutBottomSheet)
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
@@ -96,12 +100,16 @@ class MainFragment : Fragment() {
             Log.d("DBLog", "BEFORE: i : $i, ${timetableDaysActivated[i].toString()}")
         }
         Log.d("Datelog", currentpagedate.time.day.toString())
-        bottomsheet = BottomSheetBehavior.from((activity as MainActivity).layoutBottomSheet)
+        //bottomsheet = BottomSheetBehavior.from((activity as MainActivity).layoutBottomSheet)
         (activity as MainActivity).ToolBar_Main.title = "$date $month, $day"
         buttonBottomSheet = (activity as MainActivity).button_sheet_add
         editTextBottomSheet = (activity as MainActivity).editText_hometask_bottom
+        tabLayoutFragment = tabLayoutMainFragment
         mainviewpager = viewpager_mainfragment
         downloadHomework()
+//        TabLayoutMediator(tabLayoutMain, mainviewpager){tab, position ->
+//            tab.text = "3"
+//        }.attach()
         Log.d("Timetabledownload", "==================================================== ")
         mainviewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
             override fun onPageSelected(position: Int) {
@@ -114,11 +122,7 @@ class MainFragment : Fragment() {
                 bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED
             }
         })
-    }
 
-    override fun onResume() {
-        Log.d("checkforresume", "started")
-        super.onResume()
     }
 }
 
@@ -136,6 +140,7 @@ public fun downloadHomework(){
     val uid = FirebaseAuth.getInstance().uid
     val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
     var user : User?
+
 
 
     ref.addValueEventListener(object : ValueEventListener{
@@ -165,6 +170,9 @@ public fun downloadHomework(){
                         var adapter = ViewPager2Adapter(arrayfortimetable, timetable,arrayHometask, schoolName, form){}
                         //adapter.notifyDataSetChanged()
                         mainviewpager.adapter = adapter
+                        TabLayoutMediator(tabLayoutFragment, mainviewpager){tab, position ->
+                            tab.text = "3"
+                        }.attach()
                     }
                     for(i in 0..6){
                         timetable[i].forEach{
@@ -267,11 +275,11 @@ class RecyclerViewAdapter(val date : String,val timetable : MutableList<String>,
                 if (bottomsheet.state == BottomSheetBehavior.STATE_COLLAPSED || bottomsheet.state == BottomSheetBehavior.STATE_HIDDEN) {
                     //bottomsheet.state = BottomSheetBehavior.STATE_EXPANDED
                     bottomsheet.setState(BottomSheetBehavior.STATE_EXPANDED)
-                    UIUtil.showKeyboard(holder.itemView.context, editTextBottomSheet) //TODO: разобраться с клавиатурой
+                    //UIUtil.showKeyboard(holder.itemView.context, editTextBottomSheet) //TODO: разобраться с клавиатурой
                     buttonBottomSheet.setOnClickListener{
-                        UIUtil.hideKeyboard(holder.itemView.context, editTextBottomSheet)
+                        //UIUtil.hideKeyboard(holder.itemView.context, editTextBottomSheet)
                         Log.d("asdf", bottomsheet.state.toString())
-                        //bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED  //TODO: разобраться с багом bottomappbar
+                        //bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED
                         bottomsheet.setState(BottomSheetBehavior.STATE_COLLAPSED)
                         Log.d("asdf", bottomsheet.state.toString())
                         var date = Date()

@@ -61,8 +61,8 @@ val adapter = ViewPager2Adapter(array)
         viewPager2_timetableq.adapter = adapter
 
 
-        if(intent.getStringExtra("schoolName") == null || intent.getStringExtra("form") == null){
-            val uid = FirebaseAuth.getInstance().uid
+        if(intent.getStringExtra("schoolName") == null || intent.getStringExtra("form") == null){//получения школы и класса
+            val uid = FirebaseAuth.getInstance().uid //если данные из activity школы и класса пусты, то получаем из БД
             val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
             ref.addListenerForSingleValueEvent(object : ValueEventListener{
                 override fun onDataChange(p0: DataSnapshot) {
@@ -80,7 +80,7 @@ val adapter = ViewPager2Adapter(array)
             })
 
         }
-        else{
+        else{//иначе из активити
             schoolName = intent.getStringExtra("schoolName")
             form = intent.getStringExtra("form")
             fetchTimetable(schoolName, form)
@@ -103,15 +103,8 @@ val adapter = ViewPager2Adapter(array)
             if (bottomsheet.state == BottomSheetBehavior.STATE_COLLAPSED) {
                 bottomsheet.state = BottomSheetBehavior.STATE_EXPANDED
             }
-            else {
-                bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED
-            }
         }
-
-
-
-
-
+        
         button_AddToTimetable.setOnClickListener{
 
             val text = textInputLayout.editText?.text
@@ -155,7 +148,7 @@ val adapter = ViewPager2Adapter(array)
         layoutBottomSheet_Timetable.filled_exposed_dropdown_schools.setAdapter(adapterlist)
 
 
-                bottomsheet.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback(){
+        bottomsheet.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback(){
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 floatac.animate().scaleX(1 - slideOffset).scaleY(1 - slideOffset).setDuration(0).start()
                 //tab_Layout.animate().y(((0-appbarlayout.height).toFloat())*slideOffset).setDuration(0).start()
@@ -195,8 +188,8 @@ val adapter = ViewPager2Adapter(array)
 //                        .start()
                 }
                 else{
-                    Handler().postDelayed({ val imm = applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        imm.hideSoftInputFromWindow(appbarlayout.windowToken, 0) }, 100)
+                    //Handler().postDelayed({ val imm = applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager //TODO: uncomment
+                    //    imm.hideSoftInputFromWindow(appbarlayout.windowToken, 0) }, 100)
 //                    val imm = applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 //                    imm.hideSoftInputFromWindow(coordinatorlayout_SetTimetable.windowToken, 0)
                     viewPager2_timetableq.isUserInputEnabled = true
