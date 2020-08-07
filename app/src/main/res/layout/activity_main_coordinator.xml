@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:id="@+id/coordinatorlayout"
     android:background="#e5e5e5"
-    style="@style/AppTheme"
+    style="@style/Widget.MaterialComponents.ActionBar.Surface"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity"
     >
@@ -16,15 +16,18 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbarlayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+
+        >
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/ToolBar_Main"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#f6f6f6"
-            app:titleTextColor="#000000"
-            />
+            style="@style/Widget.MaterialComponents.Toolbar.Surface"
 
+            app:menu="@menu/nav_menu"
+            />
+<!--TOOD: разобраться со стилем-->
     </com.google.android.material.appbar.AppBarLayout>
 <!--    style="@style/Widget.MaterialComponents.Toolbar.Primary"-->
     <FrameLayout

@@ -30,6 +30,8 @@
             android:layout_marginHorizontal="8dp"
             android:layout_marginStart="16dp"
             android:ems="10"
+            android:focusedByDefault="false"
+            android:focusable="true"
             android:hint="Домашнее задание"
             android:inputType="textPersonName"
             app:layout_constraintBottom_toBottomOf="parent"

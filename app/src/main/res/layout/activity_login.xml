@@ -4,38 +4,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/holo_green_light"
+    style="@style/Theme.MaterialComponents.Light.NoActionBar"
     tools:context=".loginregister.LoginActivity">
 
-    <EditText
-        android:id="@+id/editText_UsernameLogin"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout_UsernameLogin"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="96dp"
         android:layout_marginEnd="32dp"
-        android:background="@drawable/rounded_edittext"
-        android:ems="10"
-        android:hint="Имя пользователя"
-        android:paddingLeft="10dp"
-        android:inputType="textPersonName"
+        android:hint="Email"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <EditText
-        android:id="@+id/editText_PasswordLogin"
+        <com.google.android.material.textfield.TextInputEditText
+            android:inputType="textEmailAddress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout_PasswordLogin"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="72dp"
+        app:errorEnabled="true"
         android:layout_marginTop="8dp"
-        android:background="@drawable/rounded_edittext"
-        android:ems="10"
         android:hint="Пароль"
-        android:inputType="textPassword"
-        android:paddingLeft="10dp"
-        app:layout_constraintEnd_toEndOf="@+id/editText_UsernameLogin"
-        app:layout_constraintStart_toStartOf="@+id/editText_UsernameLogin"
-        app:layout_constraintTop_toBottomOf="@+id/editText_UsernameLogin" />
+        app:endIconMode="password_toggle"
+        app:layout_constraintEnd_toEndOf="@+id/textInputLayout_UsernameLogin"
+        app:layout_constraintStart_toStartOf="@+id/textInputLayout_UsernameLogin"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout_UsernameLogin">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:id="@+id/textView_BackToRegister"
@@ -47,16 +56,29 @@
         app:layout_constraintStart_toStartOf="@+id/button_Login"
         app:layout_constraintTop_toBottomOf="@+id/button_Login" />
 
+
     <Button
         android:id="@+id/button_Login"
+
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="72dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/rounded_button"
         android:text="Войти"
-        android:textColor="@android:color/white"
-        app:layout_constraintEnd_toEndOf="@+id/editText_PasswordLogin"
-        app:layout_constraintStart_toStartOf="@+id/editText_PasswordLogin"
-        app:layout_constraintTop_toBottomOf="@+id/editText_PasswordLogin" />
+        app:layout_constraintEnd_toEndOf="@+id/textInputLayout_PasswordLogin"
+        app:layout_constraintStart_toStartOf="@+id/textInputLayout_PasswordLogin"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout_PasswordLogin" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:fontFamily="sans-serif-thin"
+        android:text="Colibri"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

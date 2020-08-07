@@ -7,15 +7,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import android.view.LayoutInflater
 import android.widget.Toast
-import com.example.kotlindiary.MainActivity
+import androidx.core.widget.doOnTextChanged
 import com.example.kotlindiary.R
 import com.example.kotlindiary.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_register.*
+import kotlinx.android.synthetic.main.layout_bottom_sheet_set_timetable.*
 import java.util.*
 
 class RegisterActivity : AppCompatActivity() {
@@ -31,14 +31,23 @@ class RegisterActivity : AppCompatActivity() {
         button_Register.setOnClickListener(){
             performRegister()
         }
-        button_Select_Photo.setOnClickListener{
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            startActivityForResult(intent, 0)
-        }
+//        button_Select_Photo.setOnClickListener{
+//            val intent = Intent(Intent.ACTION_PICK)
+//            intent.type = "image/*"
+//            startActivityForResult(intent, 0)
+//        }
         button_Login.setOnClickListener(){
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
+        }
+        textInputLayout_EmailRegister.editText?.doOnTextChanged { text, start, count, after ->
+            textInputLayout_EmailRegister.error = null
+        }
+        textInputLayout_UsernameRegister.editText?.doOnTextChanged { text, start, count, after ->
+            textInputLayout_UsernameRegister.error = null
+        }
+        textInputLayout_PasswordRegister.editText?.doOnTextChanged { text, start, count, after ->
+            textInputLayout_PasswordRegister.error = null
         }
     }
 
@@ -51,19 +60,19 @@ class RegisterActivity : AppCompatActivity() {
             selectedPhotoUri = data.data
             var bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedPhotoUri)
             //var bitmapDrawable = BitmapDrawable(bitmap)
-            selectphoto_ImageView_Register.setImageBitmap(bitmap)
-            button_Select_Photo.alpha = 0f
+            //selectphoto_ImageView_Register.setImageBitmap(bitmap)
+            //button_Select_Photo.alpha = 0f
 
 //            button_Select_Photo.setBackgroundDrawable(bitmapDrawable)
-              button_Select_Photo.setText("")
+              //button_Select_Photo.setText("")
 
         }
     }
 
     private fun performRegister(){
-        var username = editText_UsernameLogin.text.toString()
-        var email = editText_Email.text.toString()
-        var password = editText_PasswordLogin.text.toString()
+        val username = textInputLayout_UsernameRegister.editText?.text.toString()
+        val email = textInputLayout_EmailRegister.editText?.text.toString()
+        val password = textInputLayout_PasswordRegister.editText?.text.toString()
 
         if(email.isEmpty() || username.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Пожалуйста, введите недостающие данные", Toast.LENGTH_SHORT).show()
@@ -80,8 +89,8 @@ class RegisterActivity : AppCompatActivity() {
                 if(it.isSuccessful){
                     // if(it.result.user.uid)
                     Log.d("RegisterActivity", "User succsessfully created with uid: ${it.result?.user?.uid}")
-                    uploadeImageToFireBaseStorage()
-                    //saveUserToFireBaseDatabase()
+                    //uploadeImageToFireBaseStorage()
+                    saveUserToFireBaseDatabase()
                 }
             }
             .addOnFailureListener{
@@ -124,7 +133,7 @@ class RegisterActivity : AppCompatActivity() {
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
         val url = userImageUrl
         Log.d("RegisterActivity", "I'm here")
-        val user = User(uid, editText_UsernameLogin.text.toString(), url, editText_Email.text.toString(), "", "", "", "")
+        val user = User(uid, textInputLayout_UsernameRegister.editText?.text.toString(), url, textInputLayout_EmailRegister.editText?.text.toString(), "", "", "", "")
         ref.setValue(user)
             .addOnSuccessListener {
                 Log.d("RegisterActivity", "Finally complete registration and save user to database")

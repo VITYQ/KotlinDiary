@@ -47,12 +47,12 @@
         <item name="colorPrimaryDark">#d4d4d4</item>
         <item name="colorSecondary">#c1ccff</item>
         <item name="colorBackgroundFloating">#ffffff</item>
-        <item name="colorSurface">#ffffff</item>
+        <item name="colorSurface">#f6f6f6</item>
         <!--        <item name="colorSurface">#fff3c1</item>-->
         <item name="colorError">#B00020</item>
-        <item name="colorOnPrimary">#356859</item>
+        <item name="colorOnPrimary">#ffffff</item>
         <item name="colorOnSecondary">#356859</item>
-        <item name="colorOnSurface">#356859</item>
+        <item name="colorOnSurface">#000000</item>
 <!--        <item name="colorPrimary">#D81B60</item>-->
 <!--        <item name="colorPrimaryDark">#ccc8b4</item>-->
 <!--        <item name="colorSecondary">#c1ccff</item>-->

@@ -4,64 +4,60 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar"
-    android:background="@android:color/holo_green_light"
     tools:context=".loginregister.RegisterActivity">
 
-    <EditText
-        android:id="@+id/editText_UsernameLogin"
-        android:layout_width="347dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="32dp"
-        android:background="@drawable/rounded_edittext"
-        android:ems="10"
-        android:hint="Имя пользователя "
-        android:inputType="textPersonName"
-        android:paddingLeft="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_Select_Photo" />
+<!--    <EditText-->
+<!--        android:id="@+id/editText_UsernameRegister"-->
+<!--        android:layout_width="347dp"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:layout_marginTop="32dp"-->
+<!--        android:background="@drawable/rounded_edittext"-->
+<!--        android:ems="10"-->
+<!--        android:hint="Имя пользователя "-->
+<!--        android:inputType="textPersonName"-->
+<!--        android:paddingLeft="16dp"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/button_Select_Photo" />-->
 
-    <EditText
-        android:id="@+id/editText_Email"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/rounded_edittext"
-        android:ems="10"
-        android:hint="Email"
-        android:inputType="textEmailAddress"
-        android:paddingLeft="16dp"
-        app:layout_constraintEnd_toEndOf="@+id/editText_UsernameLogin"
-        app:layout_constraintStart_toStartOf="@+id/editText_UsernameLogin"
-        app:layout_constraintTop_toBottomOf="@+id/editText_UsernameLogin" />
+<!--    <EditText-->
+<!--        android:id="@+id/editText_Email"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:background="@drawable/rounded_edittext"-->
+<!--        android:ems="10"-->
+<!--        android:hint="Email"-->
+<!--        android:inputType="textEmailAddress"-->
+<!--        android:paddingLeft="16dp"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/editText_UsernameRegister"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/editText_UsernameRegister"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/editText_UsernameRegister" />-->
 
-    <EditText
-        android:id="@+id/editText_PasswordLogin"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/rounded_edittext"
+<!--    <EditText-->
+<!--        android:id="@+id/editText_PasswordRegister"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:background="@drawable/rounded_edittext"-->
 
-        android:ems="10"
-        android:hint="Пароль"
-        android:inputType="textPassword"
-        android:paddingLeft="16dp"
-        app:layout_constraintEnd_toEndOf="@+id/editText_Email"
-        app:layout_constraintStart_toStartOf="@+id/editText_Email"
-        app:layout_constraintTop_toBottomOf="@+id/editText_Email" />
+<!--        android:ems="10"-->
+<!--        android:hint="Пароль"-->
+<!--        android:inputType="textPassword"-->
+<!--        android:paddingLeft="16dp"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/editText_Email"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/editText_Email"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/editText_Email" />-->
 
     <Button
         android:id="@+id/button_Register"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="72dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/rounded_button"
         android:text="Регистрация"
-        android:textColor="@android:color/white"
-        app:layout_constraintEnd_toEndOf="@+id/editText_PasswordLogin"
-        app:layout_constraintStart_toStartOf="@+id/editText_PasswordLogin"
-        app:layout_constraintTop_toBottomOf="@+id/editText_PasswordLogin" />
+        app:layout_constraintEnd_toEndOf="@+id/textInputLayout_PasswordRegister"
+        app:layout_constraintStart_toStartOf="@+id/textInputLayout_PasswordRegister"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout_PasswordRegister" />
 
     <TextView
         android:id="@+id/button_Login"
@@ -73,59 +69,101 @@
         app:layout_constraintStart_toStartOf="@+id/button_Register"
         app:layout_constraintTop_toBottomOf="@+id/button_Register" />
 
-    <Button
-        android:id="@+id/button_Select_Photo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:width="150dp"
-        android:height="150dp"
+<!--    <Button-->
+<!--        android:id="@+id/button_Select_Photo"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="32dp"-->
+<!--        android:width="150dp"-->
+<!--        android:height="150dp"-->
+<!--        android:visibility="gone"-->
+<!--        android:background="@drawable/rounded_image_button"-->
+<!--        android:text="Выберите изображение"-->
+<!--        android:textColor="@android:color/white"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
 
-        android:background="@drawable/rounded_image_button"
-        android:text="Выберите изображение"
-        android:textColor="@android:color/white"
+<!--    <de.hdodenhof.circleimageview.CircleImageView-->
+<!--        android:id="@+id/selectphoto_ImageView_Register"-->
+<!--        android:layout_width="150dp"-->
+<!--        android:layout_height="150dp"-->
+<!--        android:visibility="gone"-->
+<!--        app:civ_border_width="4dp"-->
+<!--        app:civ_border_color="@android:color/white"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/button_Select_Photo"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/button_Select_Photo"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/button_Select_Photo"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/button_Select_Photo" />-->
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout_UsernameRegister"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="96dp"
+        android:layout_marginEnd="32dp"
+        android:hint="Имя пользователя"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/selectphoto_ImageView_Register"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        app:civ_border_width="4dp"
-        app:civ_border_color="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/button_Select_Photo"
-        app:layout_constraintEnd_toEndOf="@+id/button_Select_Photo"
-        app:layout_constraintStart_toStartOf="@+id/button_Select_Photo"
-        app:layout_constraintTop_toTopOf="@+id/button_Select_Photo" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <!--            <com.google.android.material.textfield.TextInputEditText-->
-    <!--                android:layout_width="match_parent"-->
-    <!--                android:layout_height="wrap_content"-->
-    <!--                android:layout_marginTop="52dp"-->
-    <!--                app:layout_constraintTop_toBottomOf="@+id/button2"-->
-    <!--                tools:layout_editor_absoluteX="0dp" />-->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout_EmailRegister"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="8dp"
+        android:hint="Email"
+        app:layout_constraintEnd_toEndOf="@+id/textInputLayout_UsernameRegister"
+        app:layout_constraintStart_toStartOf="@+id/textInputLayout_UsernameRegister"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout_UsernameRegister">
 
-<!--        <com.google.android.material.textfield.TextInputLayout-->
-<!--            android:id="@+id/textInputLayout"-->
-<!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="500dp"-->
-<!--            android:layout_marginHorizontal="16dp"-->
-<!--            android:hint="Урок"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <com.google.android.material.textfield.TextInputEditText
+            android:inputType="textEmailAddress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent">-->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout_PasswordRegister"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="8dp"
+        android:hint="Пароль"
+        app:endIconMode="password_toggle"
+        app:layout_constraintEnd_toEndOf="@+id/textInputLayout_EmailRegister"
+        app:layout_constraintStart_toStartOf="@+id/textInputLayout_EmailRegister"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout_EmailRegister">
 
-<!--                <AutoCompleteTextView-->
-<!--                    android:id="@+id/filled_exposed_dropdown"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:padding="16dp"-->
-<!--                    android:layout_height="52dp"-->
-<!--                    android:inputType="none"/>-->
-<!--        </com.google.android.material.textfield.TextInputLayout>-->
+        <com.google.android.material.textfield.TextInputEditText
+            android:inputType="textPassword"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.textfield.TextInputLayout>
 
 
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:fontFamily="sans-serif-thin"
+        android:text="Colibri"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

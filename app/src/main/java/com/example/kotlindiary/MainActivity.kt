@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
+import android.renderscript.ScriptGroup
 import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
@@ -12,11 +13,13 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
 import com.example.kotlindiary.loginregister.RegisterActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
@@ -74,8 +77,10 @@ class MainActivity : AppCompatActivity() {
                             key.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
                         }
                         else if(newState == BottomSheetBehavior.STATE_COLLAPSED){
+                            Log.d("statecheck", "show on on change")
                             val key = baseContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                             key.hideSoftInputFromWindow(editText_hometask_bottom.windowToken, 0)
+                            editText_hometask_bottom.clearFocus() //снимаем фокус, чтобы после перезапуска активити не открывалась автоматически клавиатура
                         }
                     }
                 })
@@ -126,10 +131,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
     override fun onBackPressed() {
+
         if(bottomsheet.state != BottomSheetBehavior.STATE_COLLAPSED){
-            val key = baseContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            key.hideSoftInputFromWindow(editText_hometask_bottom.windowToken, 0)
+            //val key = baseContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            //key.hideSoftInputFromWindow(editText_hometask_bottom.windowToken, InputMethodManager.HIDE_IMPLICIT_ONLY)
             bottomsheet.setState(BottomSheetBehavior.STATE_COLLAPSED)
+            editText_hometask_bottom.clearFocus() //снимаем фокус, чтобы после перезапуска активити не открывалась автоматически клавиатура
         }
         else{
             super.onBackPressed()
@@ -138,28 +145,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        //menuInflater.inflate(R.menu.nav_menu, menu)
+        menuInflater.inflate(R.menu.nav_menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
-            R.id.menu_add ->{
-
-                val key = baseContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                bottomsheet.state = BottomSheetBehavior.STATE_EXPANDED
-                editText_hometask_bottom.postDelayed(Runnable(){
-                    run(){
-                        editText_hometask_bottom.requestFocus()//TODO: дальше разбираться с клавиатурой
-                        //key.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
-                    }
-                }, 100)
-            }
-            R.id.menu_sign_out ->{
-                FirebaseAuth.getInstance().signOut()
-                val intent = Intent(this, RegisterActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                startActivity(intent)
+            R.id.menuChooseDay ->{
+                val builder = MaterialDatePicker.Builder.datePicker()
+                val picker = builder.build()
+                picker.show(supportFragmentManager, picker.toString())
             }
         }
         return super.onOptionsItemSelected(item)

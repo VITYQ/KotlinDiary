@@ -3,18 +3,19 @@ package com.example.kotlindiary
 
 //import android.app.Fragment
 
+import android.app.Activity
 import android.content.Context
+import android.content.res.Resources
+import android.graphics.Color
 import android.os.*
 import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.size
 import androidx.fragment.app.FragmentActivity
@@ -47,7 +48,10 @@ import kotlinx.android.synthetic.main.day_fragment.*
 import kotlinx.android.synthetic.main.day_fragment.view.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.layout_bottom_sheet_main.*
+import kotlinx.android.synthetic.main.lesson_item_card.view.*
 import kotlinx.android.synthetic.main.lesson_row.view.*
+import kotlinx.android.synthetic.main.lesson_row.view.textView
+import kotlinx.android.synthetic.main.lesson_row.view.textView2
 import net.yslibrary.android.keyboardvisibilityevent.util.UIUtil
 import java.security.AccessController.getContext
 import java.util.*
@@ -123,6 +127,11 @@ class MainFragment : Fragment() {
             }
         })
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+
+        super.onCreateOptionsMenu(menu, inflater)
     }
 }
 
@@ -244,13 +253,17 @@ class RecyclerViewAdapter(val date : String,val timetable : MutableList<String>,
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             holder.itemView.textView2.text = timetable[position]
+            holder.itemView.textView3.text = (position+1).toString()
             val ref = FirebaseDatabase.getInstance().getReference("/schools/$school/$form/hometasks/$date/")
             ref.addValueEventListener(object : ValueEventListener{
                 override fun onDataChange(p0: DataSnapshot) {
                     p0.children.forEach {
                         if(it.key == timetable[position]){
-                        //Log.d("DBLogging", "key: $")
+                        Log.d("forholder", "${it.key} - $position")
+                            //holder.itemView.textView3.text = it.key
                             holder.itemView.textView.text = it.value.toString()
+                            holder.itemView.textView.setTextColor(Color.parseColor("#444444"))
+                            //holder.itemView.textView.setTextColor(R.color.colorActivatedItem)
                         }
 
                     }

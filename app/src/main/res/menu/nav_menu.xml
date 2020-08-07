@@ -2,10 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/menu_sign_out"
-        android:title="Sign Out"
+    <item android:id="@+id/menuShareHT"
+
+        android:icon="@drawable/ic_baseline_share_24"
+        android:title="Отправить ДЗ"
+        android:orderInCategory="2"
         app:showAsAction="ifRoom"/>
-    <item android:id="@+id/menu_add"
-        android:title="New"
+    <item android:id="@+id/menuChooseDay"
+        android:title="Выбрать день"
+        android:orderInCategory="1"
+        android:icon="@drawable/ic_baseline_insert_invitation_24"
         app:showAsAction="ifRoom"/>
 </menu>

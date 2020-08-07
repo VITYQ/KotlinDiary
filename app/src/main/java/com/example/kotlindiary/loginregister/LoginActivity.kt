@@ -5,13 +5,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.core.widget.doOnTextChanged
 import com.example.kotlindiary.MainActivity
 import com.example.kotlindiary.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_register.button_Login
-import kotlinx.android.synthetic.main.activity_register.editText_PasswordLogin
-import kotlinx.android.synthetic.main.activity_register.editText_UsernameLogin
+import kotlinx.android.synthetic.main.layout_bottom_sheet_set_timetable.*
 
 class LoginActivity : AppCompatActivity() {
 
@@ -19,24 +21,34 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-    button_Login.setOnClickListener(){
-        performSignIn()
-    }
-
-    textView_BackToRegister.setOnClickListener(){
-        finish()
-    }
+        button_Login.setOnClickListener(){
+            performSignIn()
+        }
+        textView_BackToRegister.setOnClickListener(){
+            finish()
+        }
+        textInputLayout_PasswordLogin.editText?.doOnTextChanged { text, start, count, after ->
+            textInputLayout_PasswordLogin.error = null
+        }
+        textInputLayout_UsernameLogin.editText?.doOnTextChanged { text, start, count, after ->
+            textInputLayout_UsernameLogin.error = null
+        }
 
     }
 
     private fun performSignIn(){
-        val username = editText_UsernameLogin.text.toString()
-        val password = editText_PasswordLogin.text.toString()
+        val username = textInputLayout_UsernameLogin.editText?.text.toString()
+        val password  = textInputLayout_PasswordLogin.editText?.text.toString()
         Log.d("ActivityLogin", "Username is $username")
         Log.d("ActivityLogin", "Password is $password")
+
         if(username.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Пожалуйста, введите недостающие данные", Toast.LENGTH_SHORT).show()
-            return
+            if(username.isEmpty()){
+                textInputLayout_UsernameLogin.error = "Введите email"
+            }
+            if(password.isEmpty()){
+                textInputLayout_PasswordLogin.error = "Введите пароль"
+            }
         }
 
         else{
@@ -52,7 +64,8 @@ class LoginActivity : AppCompatActivity() {
 
                 }
                 .addOnFailureListener{
-                    Toast.makeText(this, "Failure: ${it.message}", Toast.LENGTH_SHORT).show()
+
+                    Toast.makeText(this, "Failure: ${it}", Toast.LENGTH_SHORT).show()
                 }
         }
     }
