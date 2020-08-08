@@ -75,7 +75,9 @@ class RegisterActivity : AppCompatActivity() {
         val password = textInputLayout_PasswordRegister.editText?.text.toString()
 
         if(email.isEmpty() || username.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Пожалуйста, введите недостающие данные", Toast.LENGTH_SHORT).show()
+            if(email.isEmpty()){textInputLayout_EmailRegister.error = "Введите email"}
+            if(username.isEmpty()){textInputLayout_UsernameRegister.error = "Введите имя пользователя"}
+            if(password.isEmpty()){textInputLayout_PasswordRegister.error = "Введите пароль"}
             return
         }
 

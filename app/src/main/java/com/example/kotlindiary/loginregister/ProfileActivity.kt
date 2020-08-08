@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.core.widget.doOnTextChanged
 import com.example.kotlindiary.ChooseSchoolActivity
 import com.example.kotlindiary.MainActivity
 import com.example.kotlindiary.R
@@ -14,6 +15,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_profile.*
+import kotlinx.android.synthetic.main.layout_bottom_sheet_set_timetable.*
 
 
 class ProfileActivity : AppCompatActivity() {
@@ -22,11 +24,19 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
+        textInputLayout_Name.editText?.doOnTextChanged { text, start, count, after ->
+            textInputLayout_Name.error = null
+        }
+        textInputLayout_Surname.editText?.doOnTextChanged { text, start, count, after ->
+            textInputLayout_Surname.error = null
+        }
+
         button_Next.setOnClickListener{
-            val name = editText_Name.text.toString()
-            val surname = editText_Surname.text.toString()
+            val name = textInputLayout_Name.editText?.text.toString()
+            val surname = textInputLayout_Surname.editText?.text.toString()
             if(name.isEmpty() || surname.isEmpty()){
-                Toast.makeText(this, "Атата, введи недостающие данные и продолжим ;)", Toast.LENGTH_SHORT).show()
+                if(name.isEmpty()){textInputLayout_Name.error = "Введите имя"}
+                if(surname.isEmpty()){textInputLayout_Surname.error = "Введите фамилию"}
                 return@setOnClickListener
             }
             else {
@@ -38,32 +48,13 @@ class ProfileActivity : AppCompatActivity() {
         val uid = FirebaseAuth.getInstance().uid ?: ""
 
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
-        ref.child("name").setValue(editText_Name.text.toString())
-        ref.child("surname").setValue(editText_Surname.text.toString())
+        ref.child("name").setValue(textInputLayout_Name.editText?.text.toString())
+        ref.child("surname").setValue(textInputLayout_Surname.editText?.text.toString())
             .addOnSuccessListener {
                 Log.d("ProfileActivity", "Success added name and surname to Firebase")
                 val intent = Intent(this, ChooseSchoolActivity::class.java)
                 startActivity(intent)
             }
-
-
-//        ref.setValue(userDat)
-//            .addOnSuccessListener {
-//                Log.d("ProfileActivity", "Success added name and surname to Firebase")
-//                val intent = Intent(this, MainActivity::class.java)
-//                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-//                startActivity(intent)
-//            }
-//        ref.setValue(user)
-//            .addOnSuccessListener {
-//                Log.d("RegisterActivity", "Finally complete registration and save user to database")
-//                val intent = Intent(this, ProfileActivity::class.java)
-//                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-//                startActivity(intent)
-//            }
-//            .addOnFailureListener{
-//                Log.d("RegisterActivity", "Something has gone wrong")
-//            }
     }
 
 }

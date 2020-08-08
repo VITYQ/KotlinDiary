@@ -4,52 +4,97 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/holo_green_light"
+
     tools:context="com.example.kotlindiary.loginregister.ProfileActivity">
 
     <Button
         android:id="@+id/button_Next"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="72dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/rounded_button"
         android:text="Продолжить"
-        android:textColor="@android:color/white"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/editText_Surname"
-        app:layout_constraintStart_toStartOf="@+id/editText_Surname"
-        app:layout_constraintTop_toBottomOf="@+id/editText_Surname" />
+        app:layout_constraintEnd_toEndOf="@+id/textInputLayout_Surname"
+        app:layout_constraintStart_toStartOf="@+id/textInputLayout_Surname"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout_Surname" />
 
-    <EditText
-        android:id="@+id/editText_Name"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
+<!--    <EditText-->
+<!--        android:id="@+id/editText_Name"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:layout_marginStart="32dp"-->
+<!--        android:layout_marginTop="256dp"-->
+<!--        android:layout_marginEnd="32dp"-->
+<!--        android:background="@drawable/rounded_edittext"-->
+<!--        android:ems="10"-->
+<!--        android:hint="Имя"-->
+<!--        android:inputType="textPersonName"-->
+<!--        android:paddingLeft="16dp"-->
+<!--        android:text=""-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--    <EditText-->
+<!--        android:id="@+id/editText_Surname"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:background="@drawable/rounded_edittext"-->
+<!--        android:ems="10"-->
+<!--        android:hint="Фамилмя"-->
+<!--        android:inputType="textPersonName"-->
+<!--        android:paddingLeft="16dp"-->
+<!--        android:text=""-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/editText_Name"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/editText_Name"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/editText_Name" />-->
+    <com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/textInputLayout_Name"
+    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:layout_marginStart="32dp"
+    android:layout_marginEnd="32dp"
+    android:layout_marginTop="180dp"
+    android:hint="Имя"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:inputType="textPersonName"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout_Surname"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="256dp"
         android:layout_marginEnd="32dp"
-        android:background="@drawable/rounded_edittext"
-        android:ems="10"
-        android:hint="Имя"
-        android:inputType="textPersonName"
-        android:paddingLeft="16dp"
-        android:text=""
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/editText_Surname"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/rounded_edittext"
-        android:ems="10"
-        android:hint="Фамилмя"
-        android:inputType="textPersonName"
-        android:paddingLeft="16dp"
-        android:text=""
-        app:layout_constraintEnd_toEndOf="@+id/editText_Name"
-        app:layout_constraintStart_toStartOf="@+id/editText_Name"
-        app:layout_constraintTop_toBottomOf="@+id/editText_Name" />
+        android:hint="Фамилия"
+        app:layout_constraintEnd_toEndOf="@+id/textInputLayout_Name"
+        app:layout_constraintStart_toStartOf="@+id/textInputLayout_Name"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout_Name">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.textfield.TextInputLayout>
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:fontFamily="sans-serif-thin"
+        android:text="Colibri"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

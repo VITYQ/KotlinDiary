@@ -5,6 +5,7 @@ package com.example.kotlindiary
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.*
@@ -23,6 +24,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.example.kotlindiary.loginregister.ChooseFormActivity
+import com.example.kotlindiary.loginregister.ProfileActivity
 import com.example.kotlindiary.models.User
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -133,70 +136,156 @@ class MainFragment : Fragment() {
 
         super.onCreateOptionsMenu(menu, inflater)
     }
-}
+
+
+    public fun downloadHomework(){
+        var calendar = Calendar.getInstance()
+        var date = Date()
+        Log.d("DateLog", "1: ${date.date}")
+        calendar.setTime(date)
+        calendar.add(Calendar.DATE, 5)
+        date = calendar.getTime()
+        Log.d("DateLog", "2: ${date.date}")
+        val uid = FirebaseAuth.getInstance().uid
+        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+        var user : User?
 
 
 
-
-public fun downloadHomework(){
-    var calendar = Calendar.getInstance()
-    var date = Date()
-    Log.d("DateLog", "1: ${date.date}")
-    calendar.setTime(date)
-    calendar.add(Calendar.DATE, 5)
-    date = calendar.getTime()
-    Log.d("DateLog", "2: ${date.date}")
-    val uid = FirebaseAuth.getInstance().uid
-    val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
-    var user : User?
-
-
-
-    ref.addValueEventListener(object : ValueEventListener{
-        override fun onDataChange(p0: DataSnapshot) {
-            user = p0.getValue(User::class.java)
-            val schoolName = user?.school
-            val form = user?.form
-            val refTimetable = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/$form/timetable")
-            refTimetable.addValueEventListener(object : ValueEventListener{
-                override fun onDataChange(p0: DataSnapshot) {
-                    var timetable = Array(7, {mutableListOf<String>()})
-                    var arrayHometask = emptyArray<String>()
-                    p0.children.forEach {
-                        val key = it.key?.toInt()
-                        if (key!=null){
-                            timetableDaysActivated[key]=true
-                            it.children.forEach{
-                                //timetable[key].add(it.toString())
-                                Log.d("Timetabledownload", "key : $key, it: ${it.toString()} ")
-                                timetable[key].add(it.value.toString())
-                            }
-                        }
-//
-                    }
-                    val arrayfortimetable : Array<MutableList<String>> = makeIntForTimetableAdapter()
-                    if(schoolName != null && form != null){
-                        var adapter = ViewPager2Adapter(arrayfortimetable, timetable,arrayHometask, schoolName, form){}
-                        //adapter.notifyDataSetChanged()
-                        mainviewpager.adapter = adapter
-                        adapterTabLayout()
-
-                    }
-                    for(i in 0..6){
-                        timetable[i].forEach{
-                            Log.d("DBLog", "Day $i : ${it}")
-                        }
-                    }
-                    for(i in 0..timetableDaysActivated.size-1){
-                        Log.d("DBLog", "AFTER: i : $i, ${timetableDaysActivated[i].toString()}")
-                    }
+        ref.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(p0: DataSnapshot) {
+                user = p0.getValue(User::class.java)
+                val schoolName = user?.school
+                val form = user?.form
+                if(user?.name == "" || user?.surname == ""){
+                    val intent = Intent(activity, ProfileActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    startActivity(intent)
                 }
-                override fun onCancelled(p0: DatabaseError) {}
-            })
-        }
-        override fun onCancelled(p0: DatabaseError) {}
-    })
+                else if(schoolName == ""){
+                    val intent = Intent(activity, ChooseSchoolActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+
+                    startActivity(intent)
+                }
+                else if(form == ""){
+                    val intent = Intent(activity, ChooseFormActivity::class.java)
+                    intent.putExtra("schoolName", schoolName)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    startActivity(intent)
+                }
+                else{
+                    val refTimetable = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/$form/timetable")
+                    refTimetable.addValueEventListener(object : ValueEventListener{
+                        override fun onDataChange(p0: DataSnapshot) {
+                            var timetable = Array(7, {mutableListOf<String>()})
+                            var arrayHometask = emptyArray<String>()
+                            var timetableisreal = false
+                            p0.children.forEach {
+                                val key = it.key?.toInt()
+                                if (key!=null){
+                                    timetableisreal = true
+                                    timetableDaysActivated[key]=true
+                                    it.children.forEach{
+                                        //timetable[key].add(it.toString())
+                                        Log.d("Timetabledownload", "key : $key, it: ${it.toString()} ")
+                                        timetable[key].add(it.value.toString())
+                                    }
+                                }
+//
+                            }
+                            if(timetableisreal){
+                                val arrayfortimetable : Array<MutableList<String>> = makeIntForTimetableAdapter()
+                                if(schoolName != null && form != null){
+                                    var adapter = ViewPager2Adapter(arrayfortimetable, timetable,arrayHometask, schoolName, form){}
+                                    //adapter.notifyDataSetChanged()
+                                    mainviewpager.adapter = adapter
+                                    adapterTabLayout()
+
+                                }
+                            }
+                            else{
+                                val intent = Intent(activity, SetTimetableActivity::class.java)
+                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                startActivity(intent)
+                            }
+
+                        }
+                        override fun onCancelled(p0: DatabaseError) {}
+                    })
+                }
+
+            }
+            override fun onCancelled(p0: DatabaseError) {}
+        })
+    }
 }
+
+
+
+
+//public fun downloadHomework(){
+//    var calendar = Calendar.getInstance()
+//    var date = Date()
+//    Log.d("DateLog", "1: ${date.date}")
+//    calendar.setTime(date)
+//    calendar.add(Calendar.DATE, 5)
+//    date = calendar.getTime()
+//    Log.d("DateLog", "2: ${date.date}")
+//    val uid = FirebaseAuth.getInstance().uid
+//    val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+//    var user : User?
+//
+//
+//
+//    ref.addValueEventListener(object : ValueEventListener{
+//        override fun onDataChange(p0: DataSnapshot) {
+//            user = p0.getValue(User::class.java)
+//            val schoolName = user?.school
+//            val form = user?.form
+//            if(schoolName == null){
+//                val intent = Intent(this, ChooseSchoolActivity::class.java)
+//            }
+//            val refTimetable = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/$form/timetable")
+//            refTimetable.addValueEventListener(object : ValueEventListener{
+//                override fun onDataChange(p0: DataSnapshot) {
+//                    var timetable = Array(7, {mutableListOf<String>()})
+//                    var arrayHometask = emptyArray<String>()
+//                    p0.children.forEach {
+//                        val key = it.key?.toInt()
+//                        if (key!=null){
+//                            timetableDaysActivated[key]=true
+//                            it.children.forEach{
+//                                //timetable[key].add(it.toString())
+//                                Log.d("Timetabledownload", "key : $key, it: ${it.toString()} ")
+//                                timetable[key].add(it.value.toString())
+//                            }
+//                        }
+////
+//                    }
+//                    val arrayfortimetable : Array<MutableList<String>> = makeIntForTimetableAdapter()
+//                    if(schoolName != null && form != null){
+//                        var adapter = ViewPager2Adapter(arrayfortimetable, timetable,arrayHometask, schoolName, form){}
+//                        //adapter.notifyDataSetChanged()
+//                        mainviewpager.adapter = adapter
+//                        adapterTabLayout()
+//
+//                    }
+//                    for(i in 0..6){
+//                        timetable[i].forEach{
+//                            Log.d("DBLog", "Day $i : ${it}")
+//                        }
+//                    }
+//                    for(i in 0..timetableDaysActivated.size-1){
+//                        Log.d("DBLog", "AFTER: i : $i, ${timetableDaysActivated[i].toString()}")
+//                    }
+//                }
+//                override fun onCancelled(p0: DatabaseError) {}
+//            })
+//        }
+//        override fun onCancelled(p0: DatabaseError) {}
+//    })
+//}
 
 
 class ViewPager2Adapter(val arrayfortimetable : Array<MutableList<String>>, val timetable : Array<MutableList<String>>, val hometask : Array<String>, val school : String, val form : String, private val itemClickListener: (Int) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
