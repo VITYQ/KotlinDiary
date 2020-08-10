@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import com.example.kotlindiary.ChooseSchoolActivity
 import com.example.kotlindiary.MainActivity
 import com.example.kotlindiary.R
 import com.example.kotlindiary.SetTimetableActivity
@@ -79,7 +80,12 @@ class ChooseFormActivity : AppCompatActivity() {
 
     }
 
-
+    override fun onBackPressed() {
+        val intent = Intent(this, ChooseSchoolActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+        //zsuper.onBackPressed()
+    }
 
 
     class FormItem(val formName : String) : Item<GroupieViewHolder>(){

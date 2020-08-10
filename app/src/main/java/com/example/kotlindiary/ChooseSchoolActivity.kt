@@ -23,15 +23,6 @@ class ChooseSchoolActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_choose_school)
-
-
-
-
-//
-//        val adapter = GroupAdapter<GroupieViewHolder>()
-//        adapter.add(SchoolItem("nu"))
-//        adapter.add(SchoolItem("lol"))
-//        recyclerView_chooseSchool.adapter = adapter
         fetchSchools()
         button_add_school.setOnClickListener{
             val intent = Intent(this, AddSchoolActivity::class.java)

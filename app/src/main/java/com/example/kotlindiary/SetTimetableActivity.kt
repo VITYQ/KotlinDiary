@@ -19,6 +19,7 @@ import androidx.core.view.isNotEmpty
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.example.kotlindiary.loginregister.ChooseFormActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout.MODE_SCROLLABLE
 import com.google.android.material.tabs.TabLayoutMediator
@@ -248,6 +249,13 @@ val adapter = ViewPager2Adapter(array)
 //        fetchTimetable(schoolName, form)
 
 
+    }
+
+    override fun onBackPressed() {
+        val intent = Intent(this, ChooseFormActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.putExtra("schoolName", schoolName)
+        startActivity(intent)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

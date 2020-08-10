@@ -9,18 +9,7 @@
     tools:layout_editor_absoluteY="81dp">
 
 
-    <Button
-        android:id="@+id/button_Next"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/rounded_button"
-        android:text="Продолжить"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/button_add_school"
-        app:layout_constraintEnd_toEndOf="@+id/button_add_school"
-        app:layout_constraintStart_toStartOf="@+id/button_add_school" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView_chooseSchool"
@@ -28,7 +17,7 @@
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@+id/button_Next"
+        app:layout_constraintBottom_toTopOf="@+id/button_add_school"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -36,13 +25,12 @@
     <Button
         android:id="@+id/button_add_school"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="72dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="32dp"
-        android:background="@drawable/rounded_button"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:text="моей школы нет в списке"
-        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
