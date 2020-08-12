@@ -33,10 +33,7 @@ import com.google.android.material.internal.ContextUtils.getActivity
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
@@ -71,6 +68,10 @@ lateinit var bottomsheet : BottomSheetBehavior<ConstraintLayout>
 lateinit var buttonBottomSheet : Button
 lateinit var editTextBottomSheet: EditText
 lateinit var tabLayoutFragment : TabLayout
+lateinit var listener : ValueEventListener
+lateinit var listenerInside : ValueEventListener
+lateinit var ref : DatabaseReference
+lateinit var refTimetable : DatabaseReference
 var timetableDaysActivated = booleanArrayOf(false, false, false, false, false, false, false)
 var year = Date().year
 var month = Date().month
@@ -137,22 +138,25 @@ class MainFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    override fun onPause() {
+        Log.d("DBlogFragment", "Pause")
+        ref.removeEventListener(listener)
+        refTimetable.removeEventListener(listenerInside)
+        super.onPause()
+    }
 
-    public fun downloadHomework(){
+     fun downloadHomework(){
         var calendar = Calendar.getInstance()
         var date = Date()
         Log.d("DateLog", "1: ${date.date}")
         calendar.setTime(date)
-        calendar.add(Calendar.DATE, 5)
+         calendar.add(Calendar.DATE, 5)
         date = calendar.getTime()
         Log.d("DateLog", "2: ${date.date}")
         val uid = FirebaseAuth.getInstance().uid
-        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+        ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
         var user : User?
-
-
-
-        ref.addValueEventListener(object : ValueEventListener{
+        listener = ref.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(p0: DataSnapshot) {
                 user = p0.getValue(User::class.java)
                 val schoolName = user?.school
@@ -160,23 +164,32 @@ class MainFragment : Fragment() {
                 if(user?.name == "" || user?.surname == ""){
                     val intent = Intent(activity, ProfileActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    //ref.removeEventListener(listener)
                     startActivity(intent)
+                    (activity as MainActivity).finish()
                 }
                 else if(schoolName == ""){
                     val intent = Intent(activity, ChooseSchoolActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-
+                    //ref.removeEventListener(listener)
                     startActivity(intent)
+                    (activity as MainActivity).finish()
                 }
                 else if(form == ""){
                     val intent = Intent(activity, ChooseFormActivity::class.java)
                     intent.putExtra("schoolName", schoolName)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    //ref.removeEventListener(listener)
                     startActivity(intent)
+                    (activity as MainActivity).finish()
                 }
                 else{
-                    val refTimetable = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/$form/timetable")
-                    refTimetable.addValueEventListener(object : ValueEventListener{
+                    if(schoolName != null && form != null){
+                        ifSchoolReal(schoolName, form)
+                    }
+
+                    refTimetable = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/$form/timetable")
+                    listenerInside = refTimetable.addValueEventListener(object : ValueEventListener{
                         override fun onDataChange(p0: DataSnapshot) {
                             var timetable = Array(7, {mutableListOf<String>()})
                             var arrayHometask = emptyArray<String>()
@@ -192,7 +205,6 @@ class MainFragment : Fragment() {
                                         timetable[key].add(it.value.toString())
                                     }
                                 }
-//
                             }
                             if(timetableisreal){
                                 val arrayfortimetable : Array<MutableList<String>> = makeIntForTimetableAdapter()
@@ -201,20 +213,47 @@ class MainFragment : Fragment() {
                                     //adapter.notifyDataSetChanged()
                                     mainviewpager.adapter = adapter
                                     adapterTabLayout()
-
                                 }
                             }
                             else{
-                                val intent = Intent(activity, SetTimetableActivity::class.java)
+                                val intent = Intent(activity, SetTimetableActivity::class.java) // TODO: баг при ручном изменении в БД класса у пользователя, после расписания вылет
                                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                //ref.removeEventListener(listener)
+                                //refTimetable.removeEventListener(listenerInside)
                                 startActivity(intent)
                             }
 
                         }
-                        override fun onCancelled(p0: DatabaseError) {}
+                        override fun onCancelled(p0: DatabaseError) {
+                            Log.d("DBLOGFRAGMENT", "CLOSE FIRST")
+                        }
                     })
                 }
 
+            }
+            override fun onCancelled(p0: DatabaseError) {
+                Log.d("DBLOGFRAGMENT", "CLOSE SECOND")
+            }
+        })
+
+    }
+
+    fun ifSchoolReal(schoolName : String, formName : String){
+        val ref = FirebaseDatabase.getInstance().getReference("/schools/$schoolName")
+        ref.addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onDataChange(p0: DataSnapshot) {
+                Log.d("DBLOgggg", p0.child("name").getValue().toString())
+                if(p0.child("name").getValue()==null){
+                    val intent = Intent(activity, ChooseSchoolActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    startActivity(intent)
+                }
+                else if(p0.child("$formName").getValue()==null){
+                    val intent = Intent(activity, ChooseFormActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    intent.putExtra("schoolName", schoolName)
+                    startActivity(intent)
+                }
             }
             override fun onCancelled(p0: DatabaseError) {}
         })
@@ -377,7 +416,7 @@ class RecyclerViewAdapter(val date : String,val timetable : MutableList<String>,
                 if (bottomsheet.state == BottomSheetBehavior.STATE_COLLAPSED || bottomsheet.state == BottomSheetBehavior.STATE_HIDDEN) {
                     //bottomsheet.state = BottomSheetBehavior.STATE_EXPANDED
                     bottomsheet.setState(BottomSheetBehavior.STATE_EXPANDED)
-                    //UIUtil.showKeyboard(holder.itemView.context, editTextBottomSheet) //TODO: разобраться с клавиатурой
+                    //UIUtil.showKeyboard(holder.itemView.context, editTextBottomSheet)
                     buttonBottomSheet.setOnClickListener{
                         //UIUtil.hideKeyboard(holder.itemView.context, editTextBottomSheet)
                         Log.d("asdf", bottomsheet.state.toString())

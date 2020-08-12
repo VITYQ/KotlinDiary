@@ -16,7 +16,7 @@ class AddSchoolActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_school)
         button_Add.setOnClickListener{
-            val name = editText_SchoolName.text.toString()
+            val name = textInputLayout_SchoolName.editText?.text.toString()
             if(name.isEmpty()){
                 Toast.makeText(this, "Введите название школы", Toast.LENGTH_SHORT).show()
             }
@@ -26,7 +26,8 @@ class AddSchoolActivity : AppCompatActivity() {
         }
     }
     private fun AddSchoolToFirebase(name : String){
-        val id = editText_SchoolName.text.toString()
+        //val id = editText_SchoolName.text.toString()
+        val id = textInputLayout_SchoolName.editText?.text.toString()
         val ref = FirebaseDatabase.getInstance().getReference("/schools/$id")
         ref.child("name").setValue(name)
             .addOnSuccessListener {
@@ -37,6 +38,7 @@ class AddSchoolActivity : AppCompatActivity() {
 
                 val intent = Intent(this, ChooseFormActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent.putExtra("schoolName", id)
                 startActivity(intent)
 
 

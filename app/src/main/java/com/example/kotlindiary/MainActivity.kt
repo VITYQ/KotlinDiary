@@ -53,12 +53,7 @@ class MainActivity : AppCompatActivity() {
                 .replace(R.id.frame_layout, MainFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .commit()
-
-
-
-
             setSupportActionBar(findViewById(R.id.ToolBar_Main))
-
 
                 bottomSheetBehavior.setBottomSheetCallback(object :
                     BottomSheetBehavior.BottomSheetCallback() {
@@ -132,11 +127,10 @@ class MainActivity : AppCompatActivity() {
     }
     override fun onBackPressed() {
 
-        if(bottomsheet.state != BottomSheetBehavior.STATE_COLLAPSED){
-            //val key = baseContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            //key.hideSoftInputFromWindow(editText_hometask_bottom.windowToken, InputMethodManager.HIDE_IMPLICIT_ONLY)
-            bottomsheet.setState(BottomSheetBehavior.STATE_COLLAPSED)
+
+        if(BottomSheetBehavior.from(layoutBottomSheet).state != BottomSheetBehavior.STATE_COLLAPSED){
             editText_hometask_bottom.clearFocus() //снимаем фокус, чтобы после перезапуска активити не открывалась автоматически клавиатура
+            bottomsheet.setState(BottomSheetBehavior.STATE_COLLAPSED)
         }
         else{
             super.onBackPressed()
@@ -160,22 +154,6 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 }
-
-
-//fun Activity.setTabLayoutMargin(){
-//    tabLayoutMain.visibility = View.VISIBLE
-//    var margin = frame_layout.layoutParams as ViewGroup.MarginLayoutParams
-//    margin.setMargins(0, getPixelValue(this, 104), 0, getPixelValue(this, 56))
-//    frame_layout.layoutParams = margin
-//}
-//
-//
-//fun Activity.deleteTabLayoutMargin(){
-//    tabLayoutMain.visibility = View.GONE
-//    var margin = frame_layout.layoutParams as ViewGroup.MarginLayoutParams
-//    margin.setMargins(0, getPixelValue(this, 56), 0, getPixelValue(this, 56))
-//    frame_layout.layoutParams = margin
-//}
 
 
 fun getPixelValue(context: Context, dimenId: Int): Int { //перевод dp в px для настройки отступов tablayout

@@ -45,12 +45,17 @@ class ChooseFormActivity : AppCompatActivity() {
             override fun onDataChange(p0: DataSnapshot) {
                 val adapter = GroupAdapter<GroupieViewHolder>()
                 p0.children.forEach(){
+
                     val formName = it.child("name").getValue().toString()
+                    //val formName = it.key
                     Log.d("ChooseFormActivityLog", it.toString())
-                    if(it.key != "name"){
-                        Log.d("ChooseFormActivityLog", "Added : $formName")
+
+                    Log.d("ChooseFormActivityLog", "Added : $formName")
+                    if(formName!="null" ){
                         adapter.add(FormItem(formName))
                     }
+
+
 
                 }
 

@@ -112,3 +112,21 @@ class ChooseSchoolActivity : AppCompatActivity() {
 //        }
 //    }
 }
+
+//val adapter = GroupAdapter<GroupieViewHolder>()
+//adapter.add(firstPageViewPager)
+//adapter.add(second)
+//viewPager2id.adapter = adapter
+//
+//
+//
+//
+//
+//class firstPageViewPager(val name : String) : Item<GroupieViewHolder>(){
+//    override fun getLayout () = R.layout.firstLayoutViewPager
+//    override fun bind (viewHolder: GroupieViewHolder, position: Int){}
+//}
+//class secondPageViewPager(val name : String) : Item<GroupieViewHolder>(){
+//    override fun getLayout () = R.layout.secondLayoutViewPager
+//    override fun bind (viewHolder: GroupieViewHolder, position: Int){}
+//}

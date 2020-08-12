@@ -55,6 +55,9 @@ class ProfileActivity : AppCompatActivity() {
                 val intent = Intent(this, ChooseSchoolActivity::class.java)
                 startActivity(intent)
             }
+            .addOnFailureListener {
+                Toast.makeText(this, "Что-то пошло не так", Toast.LENGTH_SHORT).show()
+            }
     }
 
 }

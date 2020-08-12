@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="120dp"
         android:layout_marginHorizontal="16dp"
-        app:boxStrokeColor="@color/colorAccent"
+
         app:helperTextEnabled="true"
         app:helperText="Чтобы вернуться, смахните вниз. Чтобы добавить уникальный предмет, введите его название в поле"
         android:hint="Урок"
@@ -42,16 +42,17 @@
 
             android:padding="16dp"
             android:layout_height="52dp"
-            android:inputType="none"/>
+            />
+<!--        android:inputType="none" если захоч выключить ввод-->
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/button_AddToTimetable"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="72dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="16dp"
         style="?attr/materialButtonOutlinedStyle"
         android:text="Добавить"
         app:layout_constraintBottom_toBottomOf="parent"
