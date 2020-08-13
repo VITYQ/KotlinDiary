@@ -26,6 +26,7 @@ class ChooseFormActivity : AppCompatActivity() {
         setContentView(R.layout.activity_choose_form)
 
         val schoolName = intent.getStringExtra("schoolName")
+        Log.d("DBLoggging", "Get intent $schoolName")
         button2.setOnClickListener{
             val intent = Intent(this, AddNewFormActivity::class.java)
             intent.putExtra("schoolName", schoolName)

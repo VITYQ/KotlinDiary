@@ -50,7 +50,7 @@ var schoolName : String = ""
 var form : String = ""
 val dayvalues = arrayOf(1, 2, 3, 4, 5, 6, 0)
 val adapter = ViewPager2Adapter(array)
-
+var timetableDaysActivated = booleanArrayOf(false, false, false, false, false, false, false)
 
 
 
@@ -115,7 +115,7 @@ val adapter = ViewPager2Adapter(array)
                     Toast.makeText(this, "Название урока не может содержать в себе '.', '#', '$', '[', ']'", Toast.LENGTH_SHORT).show()
                 }
                 else{
-                    Toast.makeText(this, textInputLayout.editText?.text, Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(this, textInputLayout.editText?.text, Toast.LENGTH_SHORT).show()
                     array[positionviewpager].add(text.toString())
                     Log.d("DBLoggging", "333: $positionviewpager")
                     adapter.notifyDataSetChanged()
@@ -255,6 +255,7 @@ val adapter = ViewPager2Adapter(array)
         val intent = Intent(this, ChooseFormActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
         intent.putExtra("schoolName", schoolName)
+        Log.d("DBLoggging", "Give school to chooseform, $schoolName")
         startActivity(intent)
     }
 
@@ -286,6 +287,7 @@ val adapter = ViewPager2Adapter(array)
                     }
             }
         }
+
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
@@ -343,6 +345,9 @@ val adapter = ViewPager2Adapter(array)
 
     }
 
+
+
+
     class RecyclerViewAdapter(val string : MutableList<String>, private val itemClickListener: (Int) -> Unit) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>(){
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewAdapter.ViewHolder {
             val itemView = LayoutInflater.from(parent.context).inflate(R.layout.schools_row, parent, false)
@@ -360,13 +365,12 @@ val adapter = ViewPager2Adapter(array)
                     builder.setTitle("Удалить урок?")
                     builder.setMessage("Вы хотите удалить урок из списка?")
                     builder.setPositiveButton("Да"){dialog, which ->
-                        Toast.makeText(holder.itemView.context, "Удалено", Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(holder.itemView.context, "Удалено", Toast.LENGTH_SHORT).show()
                         string.removeAt(position)
                         notifyItemRemoved(position)
                         notifyItemRangeChanged(position, string.size)
                     }
                     builder.setNegativeButton("Нет"){dialog, which ->
-                        Toast.makeText(holder.itemView.context, "Нет, так нет", Toast.LENGTH_SHORT).show()
                     }
                     builder.create().show()
                     return true

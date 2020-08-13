@@ -9,12 +9,11 @@ import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.*
+import android.text.Editable
 import android.util.Log
 import android.view.*
+import android.widget.*
 import androidx.fragment.app.Fragment
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
@@ -65,13 +64,16 @@ var data = Date().day-1
 var previousPage = 0
 lateinit var mainviewpager : ViewPager2
 lateinit var bottomsheet : BottomSheetBehavior<ConstraintLayout>
-lateinit var buttonBottomSheet : Button
+lateinit var buttonBottomSheet : ImageView
+lateinit var textViewBottomSheet : TextView //дз урока
+lateinit var textViewLessonBottomSheet: TextView
 lateinit var editTextBottomSheet: EditText
 lateinit var tabLayoutFragment : TabLayout
 lateinit var listener : ValueEventListener
 lateinit var listenerInside : ValueEventListener
 lateinit var ref : DatabaseReference
 lateinit var refTimetable : DatabaseReference
+public lateinit var userMain : User
 var timetableDaysActivated = booleanArrayOf(false, false, false, false, false, false, false)
 var year = Date().year
 var month = Date().month
@@ -111,6 +113,8 @@ class MainFragment : Fragment() {
         //bottomsheet = BottomSheetBehavior.from((activity as MainActivity).layoutBottomSheet)
         (activity as MainActivity).ToolBar_Main.title = "$date $month, $day"
         buttonBottomSheet = (activity as MainActivity).button_sheet_add
+        textViewBottomSheet = (activity as MainActivity).textView_hometask
+        textViewLessonBottomSheet = (activity as MainActivity).textView_lesson
         editTextBottomSheet = (activity as MainActivity).editText_hometask_bottom
         tabLayoutFragment = tabLayoutMainFragment
         mainviewpager = viewpager_mainfragment
@@ -159,6 +163,10 @@ class MainFragment : Fragment() {
         listener = ref.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(p0: DataSnapshot) {
                 user = p0.getValue(User::class.java)
+
+                userMain = user!!
+
+
                 val schoolName = user?.school
                 val form = user?.form
                 if(user?.name == "" || user?.surname == ""){
@@ -411,16 +419,16 @@ class RecyclerViewAdapter(val date : String,val timetable : MutableList<String>,
             holder.itemView.setOnClickListener {
                 Log.d("logi", "Click RecyclerView bind! Name : ${it.textView2.text}" )
                 it.context.vibratePhoneClick()
-                val view = it
-                Log.d("asdf", bottomsheet.state.toString())
                 if (bottomsheet.state == BottomSheetBehavior.STATE_COLLAPSED || bottomsheet.state == BottomSheetBehavior.STATE_HIDDEN) {
                     //bottomsheet.state = BottomSheetBehavior.STATE_EXPANDED
                     bottomsheet.setState(BottomSheetBehavior.STATE_EXPANDED)
-                    //UIUtil.showKeyboard(holder.itemView.context, editTextBottomSheet)
+                    textViewLessonBottomSheet.text = holder.itemView.textView2.text.toString()
+                    if(holder.itemView.textView.text.toString() != "нет"){
+                        textViewBottomSheet.text = holder.itemView.textView.text.toString()
+                        editTextBottomSheet.text = Editable.Factory.getInstance().newEditable(textViewBottomSheet.text)
+                    }
                     buttonBottomSheet.setOnClickListener{
-                        //UIUtil.hideKeyboard(holder.itemView.context, editTextBottomSheet)
-                        Log.d("asdf", bottomsheet.state.toString())
-                        //bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED
+
                         bottomsheet.setState(BottomSheetBehavior.STATE_COLLAPSED)
                         Log.d("asdf", bottomsheet.state.toString())
                         var date = Date()

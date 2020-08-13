@@ -25,9 +25,10 @@
             android:layout_height="?attr/actionBarSize"
             style="@style/Widget.MaterialComponents.Toolbar.Surface"
 
-            app:menu="@menu/nav_menu"
+
             />
-<!--TOOD: разобраться со стилем-->
+<!--        app:menu="@menu/nav_menu" потом вернуть меню-->
+
     </com.google.android.material.appbar.AppBarLayout>
 <!--    style="@style/Widget.MaterialComponents.Toolbar.Primary"-->
     <FrameLayout

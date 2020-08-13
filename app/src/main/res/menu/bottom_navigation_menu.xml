@@ -6,11 +6,11 @@
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_home_black_24dp"
         android:enabled="true"/>
-    <item android:id="@+id/two"
-        android:title="В ожидании"
-        app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_work_black_24dp"
-        android:enabled="true"/>
+<!--    <item android:id="@+id/two"-->
+<!--        android:title="В ожидании"-->
+<!--        app:showAsAction="ifRoom"-->
+<!--        android:icon="@drawable/ic_work_black_24dp"-->
+<!--        android:enabled="true"/>-->
     <item android:id="@+id/three"
         android:title="Настройки"
         android:icon="@drawable/ic_settings_black_24dp"

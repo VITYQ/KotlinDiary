@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
 import android.renderscript.ScriptGroup
+import android.text.Editable
 import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
@@ -38,9 +39,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_coordinator)
-
+        //verifyIsUserLoggedIn()
         val uid = FirebaseAuth.getInstance().uid
+        Log.d("BBBDLO", uid.toString())
         if (uid == null){
+
             val intent = Intent( this, RegisterActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
@@ -73,6 +76,9 @@ class MainActivity : AppCompatActivity() {
                         }
                         else if(newState == BottomSheetBehavior.STATE_COLLAPSED){
                             Log.d("statecheck", "show on on change")
+                            textView_hometask.text = ""
+                            textView_lesson.text = ""
+                            editText_hometask_bottom.text = Editable.Factory.getInstance().newEditable("")
                             val key = baseContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                             key.hideSoftInputFromWindow(editText_hometask_bottom.windowToken, 0)
                             editText_hometask_bottom.clearFocus() //снимаем фокус, чтобы после перезапуска активити не открывалась автоматически клавиатура
@@ -93,15 +99,15 @@ class MainActivity : AppCompatActivity() {
                                 .commit()
                             return@OnNavigationItemSelectedListener true
                         }
-                        R.id.two -> {
-                            //deleteTabLayoutMargin()
-                            supportFragmentManager
-                                .beginTransaction()
-                                .replace(R.id.frame_layout, SettingsFragment())
-                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                                .commit()
-                            return@OnNavigationItemSelectedListener true
-                        }
+//                        R.id.two -> {
+//                            //deleteTabLayoutMargin()
+//                            supportFragmentManager
+//                                .beginTransaction()
+//                                .replace(R.id.frame_layout, SettingsFragment())
+//                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+//                                .commit()
+//                            return@OnNavigationItemSelectedListener true
+//                        }
                         R.id.three -> {
                             //deleteTabLayoutMargin()
                             ToolBar_Main.title = "Настройки"
@@ -139,7 +145,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.nav_menu, menu)
+        //menuInflater.inflate(R.menu.nav_menu, menu) TODO: добавить функционал меню
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -153,6 +159,15 @@ class MainActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+    private fun verifyIsUserLoggedIn(){
+        val uid = FirebaseAuth.getInstance().uid
+        if (uid == null){
+            val intent = Intent( this, RegisterActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+        }
+    }
+
 }
 
 
@@ -164,12 +179,4 @@ fun getPixelValue(context: Context, dimenId: Int): Int { //перевод dp в 
 
 
 
-//    private fun verifyIsUserLoggedIn(){
-//        val uid = FirebaseAuth.getInstance().uid
-//        if (uid == null){
-//            val intent = Intent( this, RegisterActivity::class.java)
-//            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-//            startActivity(intent)
-//        }
-//    }
-//}
+
