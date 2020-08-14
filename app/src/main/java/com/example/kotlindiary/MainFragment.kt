@@ -3,56 +3,37 @@ package com.example.kotlindiary
 
 //import android.app.Fragment
 
-import android.app.Activity
+import android.content.ClipData
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
 import android.graphics.Color
 import android.os.*
 import android.text.Editable
 import android.util.Log
 import android.view.*
-import android.widget.*
-import androidx.fragment.app.Fragment
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.view.size
-import androidx.fragment.app.FragmentActivity
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.kotlindiary.loginregister.ChooseFormActivity
 import com.example.kotlindiary.loginregister.ProfileActivity
 import com.example.kotlindiary.models.User
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.internal.ContextUtils.getActivity
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.GroupieViewHolder
-import com.xwray.groupie.Item
-import com.xwray.groupie.OnItemClickListener
-import kotlinx.android.synthetic.main.activity_add_lesson.view.*
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.ToolBar_Main
-import kotlinx.android.synthetic.main.activity_main_coordinator.*
-import kotlinx.android.synthetic.main.activity_set_timetable.*
-import kotlinx.android.synthetic.main.activity_set_timetable.view.*
-import kotlinx.android.synthetic.main.day_fragment.*
 import kotlinx.android.synthetic.main.day_fragment.view.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.layout_bottom_sheet_main.*
+import kotlinx.android.synthetic.main.layout_bottom_sheet_main.view.*
 import kotlinx.android.synthetic.main.lesson_item_card.view.*
-import kotlinx.android.synthetic.main.lesson_row.view.*
 import kotlinx.android.synthetic.main.lesson_row.view.textView
 import kotlinx.android.synthetic.main.lesson_row.view.textView2
-import net.yslibrary.android.keyboardvisibilityevent.util.UIUtil
-import java.security.AccessController.getContext
 import java.util.*
 
 /**
@@ -64,7 +45,8 @@ var data = Date().day-1
 var previousPage = 0
 lateinit var mainviewpager : ViewPager2
 lateinit var bottomsheet : BottomSheetBehavior<ConstraintLayout>
-lateinit var buttonBottomSheet : ImageView
+lateinit var buttonBottomSheet : Button
+lateinit var buttonCopyBottomSheet : Button
 lateinit var textViewBottomSheet : TextView //дз урока
 lateinit var textViewLessonBottomSheet: TextView
 lateinit var editTextBottomSheet: EditText
@@ -116,6 +98,7 @@ class MainFragment : Fragment() {
         textViewBottomSheet = (activity as MainActivity).textView_hometask
         textViewLessonBottomSheet = (activity as MainActivity).textView_lesson
         editTextBottomSheet = (activity as MainActivity).editText_hometask_bottom
+        buttonCopyBottomSheet = (activity as MainActivity).button_Copy
         tabLayoutFragment = tabLayoutMainFragment
         mainviewpager = viewpager_mainfragment
         downloadHomework()
@@ -388,6 +371,7 @@ class RecyclerViewAdapter(val date : String,val timetable : MutableList<String>,
         override fun getItemCount(): Int = timetable.size
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
             holder.itemView.textView2.text = timetable[position]
             holder.itemView.textView3.text = (position+1).toString()
             val ref = FirebaseDatabase.getInstance().getReference("/schools/$school/$form/hometasks/$date/")
@@ -396,10 +380,8 @@ class RecyclerViewAdapter(val date : String,val timetable : MutableList<String>,
                     p0.children.forEach {
                         if(it.key == timetable[position]){
                         Log.d("forholder", "${it.key} - $position")
-                            //holder.itemView.textView3.text = it.key
                             holder.itemView.textView.text = it.value.toString()
                             holder.itemView.textView.setTextColor(Color.parseColor("#444444"))
-                            //holder.itemView.textView.setTextColor(R.color.colorActivatedItem)
                         }
 
                     }
@@ -417,42 +399,57 @@ class RecyclerViewAdapter(val date : String,val timetable : MutableList<String>,
 //                holder.itemView.textView.text = hometask[position]
 //            }
             holder.itemView.setOnClickListener {
+                textViewBottomSheet.text = ""
+                textViewLessonBottomSheet.text = ""
+                editTextBottomSheet.text = Editable.Factory.getInstance().newEditable("")
                 Log.d("logi", "Click RecyclerView bind! Name : ${it.textView2.text}" )
                 it.context.vibratePhoneClick()
-                if (bottomsheet.state == BottomSheetBehavior.STATE_COLLAPSED || bottomsheet.state == BottomSheetBehavior.STATE_HIDDEN) {
-                    //bottomsheet.state = BottomSheetBehavior.STATE_EXPANDED
+                //if (bottomsheet.state == BottomSheetBehavior.STATE_COLLAPSED || bottomsheet.state == BottomSheetBehavior.STATE_HIDDEN) {
                     bottomsheet.setState(BottomSheetBehavior.STATE_EXPANDED)
                     textViewLessonBottomSheet.text = holder.itemView.textView2.text.toString()
+
                     if(holder.itemView.textView.text.toString() != "нет"){
                         textViewBottomSheet.text = holder.itemView.textView.text.toString()
-                        editTextBottomSheet.text = Editable.Factory.getInstance().newEditable(textViewBottomSheet.text)
+                        //editTextBottomSheet.text = Editable.Factory.getInstance().newEditable(textViewBottomSheet.text)
                     }
+                    editTextBottomSheet.setOnKeyListener(View.OnKeyListener{v, keyCode, event -> //нажатие на энтер
+                        if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP){
+                            uploadHometask(holder)
+                        }
+                        false
+                    })
                     buttonBottomSheet.setOnClickListener{
-
-                        bottomsheet.setState(BottomSheetBehavior.STATE_COLLAPSED)
-                        Log.d("asdf", bottomsheet.state.toString())
-                        var date = Date()
-                        date = currentpagedate.getTime()
-                        val ddate = date.date
-                        val dmonth = date.month + 1
-                        val dyear = date.year + 1900
-                        val string = "$ddate-$dmonth-$dyear"
-                        val lesson = holder.itemView.textView2.text
-                        val text = editTextBottomSheet.text
-                        val ref = FirebaseDatabase.getInstance().getReference("/schools/$school/$form/hometasks/$string")
-
-                        Log.d("DBLog", "string : $string, lesson : $lesson, text : $text")
-                        ref.child("$lesson").setValue(text.toString())
+                        uploadHometask(holder)
+                    }
+                    buttonCopyBottomSheet.setOnClickListener {
+//                        val clip =
+//                            ClipData.newPlainText("", holder.itemView.textView_hometask.text.toString())
+//                        context.getSystemService(Context.CLIPBOARD_SERVICE).setPrimaryClip(clip)
                     }
 
-                }
-                else {
-                    //bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED
-                    bottomsheet.setState(BottomSheetBehavior.STATE_COLLAPSED)
-                }
+                //}
+
             }
         }
+        fun uploadHometask(holder: RecyclerView.ViewHolder){
+            val text = editTextBottomSheet.text
+            if (text.toString() != "") {
+                bottomsheet.setState(BottomSheetBehavior.STATE_COLLAPSED)
+                Log.d("asdf", bottomsheet.state.toString())
+                var date = Date()
+                date = currentpagedate.getTime()
+                val ddate = date.date
+                val dmonth = date.month + 1
+                val dyear = date.year + 1900
+                val string = "$ddate-$dmonth-$dyear"
+                val lesson = holder.itemView.textView2.text
+                val ref = FirebaseDatabase.getInstance()
+                    .getReference("/schools/$school/$form/hometasks/$string")
 
+                Log.d("DBLog", "string : $string, lesson : $lesson, text : $text")
+                ref.child("$lesson").setValue(text.toString())
+            }
+        }
         private inner class ItemViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
             init {

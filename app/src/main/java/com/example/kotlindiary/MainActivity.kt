@@ -1,18 +1,17 @@
 package com.example.kotlindiary
 
-import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
-import android.renderscript.ScriptGroup
 import android.text.Editable
 import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -21,13 +20,10 @@ import com.example.kotlindiary.loginregister.RegisterActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.ToolBar_Main
 import kotlinx.android.synthetic.main.activity_main_coordinator.*
 import kotlinx.android.synthetic.main.layout_bottom_sheet_main.*
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -70,9 +66,15 @@ class MainActivity : AppCompatActivity() {
                         if(newState == BottomSheetBehavior.STATE_EXPANDED){
 
                             val key = baseContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                            editText_hometask_bottom.requestFocus()
+                            buttonCopyBottomSheet.setOnClickListener {
+                                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                val clip = ClipData.newPlainText("label", textView_hometask.text.toString())
+                                clipboard.setPrimaryClip(clip)
+                                Toast.makeText(this@MainActivity, "Скопировано", Toast.LENGTH_SHORT).show()
+                            }
+                            //editText_hometask_bottom.requestFocus()
                             //key.showSoftInput(editText_hometask_bottom, 0)
-                            key.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+                            //key.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0) показываем клавиатуру
                         }
                         else if(newState == BottomSheetBehavior.STATE_COLLAPSED){
                             Log.d("statecheck", "show on on change")
