@@ -55,7 +55,7 @@
         android:focusable="true"
         android:focusedByDefault="false"
         android:hint="Домашнее задание"
-        android:inputType="textPersonName"
+        android:inputType="textCapSentences"
         android:textCursorDrawable="@null"
         android:textColorHighlight="#11000000"
         app:layout_constraintBottom_toTopOf="@+id/button_sheet_add"
