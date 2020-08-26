@@ -11,6 +11,7 @@ import com.example.kotlindiary.SetTimetableActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_add_new_form.*
+import kotlinx.android.synthetic.main.activity_register.*
 
 class AddNewFormActivity : AppCompatActivity() {
 var schoolName: String = ""
@@ -23,9 +24,22 @@ var schoolName: String = ""
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, forms)
         //spinner_Letter.adapter = adapter
         button.setOnClickListener{
-            if(textInputLayout_Form.editText?.text.toString() != ""){
-                UploadFormToFireBase()
-            }
+
+                val form = textInputLayout_Form.editText?.text.toString()
+                val password = textInputLayout_FormPassword.editText?.text.toString()
+                val confirm = textInputLayout_FormPasswordConfirm.editText?.text.toString()
+
+
+                if(form.isEmpty() || password.isEmpty() || confirm.isEmpty()) {
+                    if(form.isEmpty()){textInputLayout_Form.error = "Введите email"}
+                    if(password.isEmpty()){textInputLayout_FormPassword.error = "Введите имя пользователя"
+                    textInputLayout_FormPassword.contentDescription = "sssss"}
+                    if(confirm.isEmpty()){textInputLayout_FormPasswordConfirm.error = "Введите пароль"}
+                }
+                else{
+                    //UploadFormToFireBase()
+                }
+
         }
         //Log.d("check", "${spinner_Letter.selectedItem.toString()}")
     }

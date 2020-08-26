@@ -127,8 +127,11 @@ class MainFragment : Fragment() {
 
     override fun onPause() {
         Log.d("DBlogFragment", "Pause")
-        ref.removeEventListener(listener)
-        refTimetable.removeEventListener(listenerInside)
+        if(ref!=null && refTimetable!=null){
+            ref.removeEventListener(listener)
+            refTimetable.removeEventListener(listenerInside)
+        }
+
         super.onPause()
     }
 
