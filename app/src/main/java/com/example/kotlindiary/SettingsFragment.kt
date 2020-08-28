@@ -80,14 +80,11 @@ class SettingsFragment : Fragment() {
                         val builder = AlertDialog.Builder(activity as MainActivity)
                             .setView(dialogInflater)
                             .setTitle("О нас")
-
-
                         //val view: View = inflater.inflate(android.R.layout.settings_row, null)
                         //builder.setMessage("Colibri 0.9 (alpha). Ваш школьный органайзер, в оформлении которого участвует весь коллектив. Легко делитесь домашним заданием и экономьте время с Colibri! ")
                         builder.setPositiveButton("Закрыть"){dialog, which ->
                             Toast.makeText(activity as MainActivity, "Спасибо, что пользуетесь моим приложением! <3", Toast.LENGTH_SHORT).show()
                         }
-
                         builder.create().show()
                     }
                 }

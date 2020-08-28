@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.widget.doOnTextChanged
 import com.example.kotlindiary.R
 import com.example.kotlindiary.SetTimetableActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -23,6 +24,19 @@ var schoolName: String = ""
         Log.d("DBLoggging", "sch1: ${intent.getStringExtra("schoolName")}")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, forms)
         //spinner_Letter.adapter = adapter
+
+        textInputLayout_Form.editText?.doOnTextChanged { text, start, count, after ->
+            textInputLayout_Form.error = null
+        }
+        textInputLayout_FormPassword.editText?.doOnTextChanged { text, start, count, after ->
+            textInputLayout_FormPassword.error = null
+        }
+        textInputLayout_FormPasswordConfirm.editText?.doOnTextChanged { text, start, count, after ->
+            textInputLayout_FormPasswordConfirm.error = null
+        }
+
+
+
         button.setOnClickListener{
 
                 val form = textInputLayout_Form.editText?.text.toString()
@@ -37,6 +51,13 @@ var schoolName: String = ""
                     if(confirm.isEmpty()){textInputLayout_FormPasswordConfirm.error = "Введите пароль"}
                 }
                 else{
+                    if(password == confirm){
+                        UploadFormToFireBase(password, form)
+                    }
+                    else{
+                        Toast.makeText(this, "Пароли не совпадают", Toast.LENGTH_SHORT).show()
+                        textInputLayout_FormPasswordConfirm.error = "Не совпадают пароли"
+                    }
                     //UploadFormToFireBase()
                 }
 
@@ -45,20 +66,22 @@ var schoolName: String = ""
     }
 
 
-    private fun UploadFormToFireBase(){
-        val ref = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/${textInputLayout_Form.editText?.text.toString()}")
-        ref.child("name").setValue("${textInputLayout_Form.editText?.text.toString()}")
+    private fun UploadFormToFireBase(password : String, form : String){
+        val ref = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/$form")
+        ref.child("password").setValue(password)
+        ref.child("name").setValue(form)
             .addOnSuccessListener {
-
-                Log.d("DBLoggging", "sch: ${intent.getStringExtra("schoolName")}, form: ${textInputLayout_Form.editText?.text.toString()}")
                 val uid = FirebaseAuth.getInstance().uid
+                val refStudents = FirebaseDatabase.getInstance().getReference("schools/$schoolName/$form/students")
+                refStudents.child("$uid").setValue(3)
+                Log.d("DBLoggging", "sch: ${intent.getStringExtra("schoolName")}, form: ${textInputLayout_Form.editText?.text.toString()}")
                 val refusr = FirebaseDatabase.getInstance().getReference("/users/$uid")
-                refusr.child("form").setValue("${textInputLayout_Form.editText?.text.toString()}")
+                refusr.child("form").setValue(form)
                     .addOnSuccessListener {
                         val intent = Intent(this, SetTimetableActivity::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                         intent.putExtra("schoolName", schoolName)
-                        intent.putExtra("form", "${textInputLayout_Form.editText?.text.toString()}")
+                        intent.putExtra("form", form)
                         startActivity(intent)
                     }
                     .addOnFailureListener {
