@@ -53,8 +53,10 @@ lateinit var editTextBottomSheet: EditText
 lateinit var tabLayoutFragment : TabLayout
 lateinit var listener : ValueEventListener
 lateinit var listenerInside : ValueEventListener
+lateinit var ListenerForSchools : ValueEventListener
 lateinit var ref : DatabaseReference
 lateinit var refTimetable : DatabaseReference
+lateinit var refSchool : DatabaseReference
 public lateinit var userMain : User
 var timetableDaysActivated = booleanArrayOf(false, false, false, false, false, false, false)
 var year = Date().year
@@ -92,8 +94,7 @@ class MainFragment : Fragment() {
             Log.d("DBLog", "BEFORE: i : $i, ${timetableDaysActivated[i].toString()}")
         }
         Log.d("Datelog", currentpagedate.time.day.toString())
-        //bottomsheet = BottomSheetBehavior.from((activity as MainActivity).layoutBottomSheet)
-        (activity as MainActivity).ToolBar_Main.title = "$date $month, $day"
+
         buttonBottomSheet = (activity as MainActivity).button_sheet_add
         textViewBottomSheet = (activity as MainActivity).textView_hometask
         textViewLessonBottomSheet = (activity as MainActivity).textView_lesson
@@ -101,19 +102,15 @@ class MainFragment : Fragment() {
         buttonCopyBottomSheet = (activity as MainActivity).button_Copy
         tabLayoutFragment = tabLayoutMainFragment
         mainviewpager = viewpager_mainfragment
+
         downloadHomework()
-//        TabLayoutMediator(tabLayoutMain, mainviewpager){tab, position ->
-//            tab.text = "3"
-//        }.attach()
+
         Log.d("Timetabledownload", "==================================================== ")
         mainviewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
             override fun onPageSelected(position: Int) {
-                Log.d("DBlog", position.toString())
                 super.onPageSelected(position)
                 val activity = activity as MainActivity
-                Log.d("ChangeTitle", "ChangeCallback: $position")
                 changeTitle(position, activity)
-
                 bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED
             }
         })
@@ -127,10 +124,10 @@ class MainFragment : Fragment() {
 
     override fun onPause() {
         Log.d("DBlogFragment", "Pause")
-        if(ref!=null && refTimetable!=null){
-            ref.removeEventListener(listener)
-            refTimetable.removeEventListener(listenerInside)
-        }
+        refSchool.removeEventListener(ListenerForSchools)
+        ref.removeEventListener(listener)
+        refTimetable.removeEventListener(listenerInside)
+
 
         super.onPause()
     }
@@ -143,6 +140,10 @@ class MainFragment : Fragment() {
          calendar.add(Calendar.DATE, 5)
         date = calendar.getTime()
         Log.d("DateLog", "2: ${date.date}")
+
+
+
+
         val uid = FirebaseAuth.getInstance().uid
         ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
         var user : User?
@@ -151,19 +152,19 @@ class MainFragment : Fragment() {
                 user = p0.getValue(User::class.java)
 
                 userMain = user!!
-
-
                 val schoolName = user?.school
                 val form = user?.form
                 if(user?.name == "" || user?.surname == ""){
+                    Log.d("whereintent", "5")
                     val intent = Intent(activity, ProfileActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     //ref.removeEventListener(listener)
                     startActivity(intent)
                     (activity as MainActivity).finish()
                 }
-                else if(schoolName == ""){
+                else if(schoolName == "" || schoolName == null){
                     val intent = Intent(activity, ChooseSchoolActivity::class.java)
+                    Log.d("whereintent", "4")
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     //ref.removeEventListener(listener)
                     startActivity(intent)
@@ -172,6 +173,7 @@ class MainFragment : Fragment() {
                 else if(form == ""){
                     val intent = Intent(activity, ChooseFormActivity::class.java)
                     intent.putExtra("schoolName", schoolName)
+                    Log.d("whereintent", "3")
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     //ref.removeEventListener(listener)
                     startActivity(intent)
@@ -181,6 +183,8 @@ class MainFragment : Fragment() {
                     if(schoolName != null && form != null){
                         ifSchoolReal(schoolName, form)
                     }
+
+
 
                     refTimetable = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/$form/timetable")
                     listenerInside = refTimetable.addValueEventListener(object : ValueEventListener{
@@ -206,6 +210,7 @@ class MainFragment : Fragment() {
                                     var adapter = ViewPager2Adapter(arrayfortimetable, timetable,arrayHometask, schoolName, form){}
                                     //adapter.notifyDataSetChanged()
                                     mainviewpager.adapter = adapter
+                                    mainviewpager.setCurrentItem(250, false)
                                     adapterTabLayout()
                                 }
                             }
@@ -233,16 +238,19 @@ class MainFragment : Fragment() {
     }
 
     fun ifSchoolReal(schoolName : String, formName : String){
-        val ref = FirebaseDatabase.getInstance().getReference("/schools/$schoolName")
-        ref.addListenerForSingleValueEvent(object : ValueEventListener{
+        refSchool = FirebaseDatabase.getInstance().getReference("/schools/$schoolName")
+        ListenerForSchools = refSchool.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(p0: DataSnapshot) {
-                Log.d("DBLOgggg", p0.child("name").getValue().toString())
+                Log.d("DBLOgggg", "${p0.child("name").getValue().toString()}")
+                Log.d("DBLOgggg", p0.toString())
                 if(p0.child("name").getValue()==null){
+                    Log.d("whereintent", "1")
                     val intent = Intent(activity, ChooseSchoolActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     startActivity(intent)
                 }
                 else if(p0.child("$formName").getValue()==null){
+                    Log.d("whereintent", "2")
                     val intent = Intent(activity, ChooseFormActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     intent.putExtra("schoolName", schoolName)
@@ -255,75 +263,7 @@ class MainFragment : Fragment() {
 }
 
 
-
-
-//public fun downloadHomework(){
-//    var calendar = Calendar.getInstance()
-//    var date = Date()
-//    Log.d("DateLog", "1: ${date.date}")
-//    calendar.setTime(date)
-//    calendar.add(Calendar.DATE, 5)
-//    date = calendar.getTime()
-//    Log.d("DateLog", "2: ${date.date}")
-//    val uid = FirebaseAuth.getInstance().uid
-//    val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
-//    var user : User?
-//
-//
-//
-//    ref.addValueEventListener(object : ValueEventListener{
-//        override fun onDataChange(p0: DataSnapshot) {
-//            user = p0.getValue(User::class.java)
-//            val schoolName = user?.school
-//            val form = user?.form
-//            if(schoolName == null){
-//                val intent = Intent(this, ChooseSchoolActivity::class.java)
-//            }
-//            val refTimetable = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/$form/timetable")
-//            refTimetable.addValueEventListener(object : ValueEventListener{
-//                override fun onDataChange(p0: DataSnapshot) {
-//                    var timetable = Array(7, {mutableListOf<String>()})
-//                    var arrayHometask = emptyArray<String>()
-//                    p0.children.forEach {
-//                        val key = it.key?.toInt()
-//                        if (key!=null){
-//                            timetableDaysActivated[key]=true
-//                            it.children.forEach{
-//                                //timetable[key].add(it.toString())
-//                                Log.d("Timetabledownload", "key : $key, it: ${it.toString()} ")
-//                                timetable[key].add(it.value.toString())
-//                            }
-//                        }
-////
-//                    }
-//                    val arrayfortimetable : Array<MutableList<String>> = makeIntForTimetableAdapter()
-//                    if(schoolName != null && form != null){
-//                        var adapter = ViewPager2Adapter(arrayfortimetable, timetable,arrayHometask, schoolName, form){}
-//                        //adapter.notifyDataSetChanged()
-//                        mainviewpager.adapter = adapter
-//                        adapterTabLayout()
-//
-//                    }
-//                    for(i in 0..6){
-//                        timetable[i].forEach{
-//                            Log.d("DBLog", "Day $i : ${it}")
-//                        }
-//                    }
-//                    for(i in 0..timetableDaysActivated.size-1){
-//                        Log.d("DBLog", "AFTER: i : $i, ${timetableDaysActivated[i].toString()}")
-//                    }
-//                }
-//                override fun onCancelled(p0: DatabaseError) {}
-//            })
-//        }
-//        override fun onCancelled(p0: DatabaseError) {}
-//    })
-//}
-
-
 class ViewPager2Adapter(val arrayfortimetable : Array<MutableList<String>>, val timetable : Array<MutableList<String>>, val hometask : Array<String>, val school : String, val form : String, private val itemClickListener: (Int) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-        val items = mutableListOf<Any>()
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
             ItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.day_fragment, parent, false))
@@ -499,7 +439,6 @@ fun makeIntForTimetableAdapter() : Array<MutableList<String>>{
         }
         return arrayint
     }
-
 
 
 private fun adapterTabLayout(){

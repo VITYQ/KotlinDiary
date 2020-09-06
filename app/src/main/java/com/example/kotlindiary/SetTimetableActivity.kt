@@ -276,17 +276,56 @@ var timetableDaysActivated = booleanArrayOf(false, false, false, false, false, f
     }
 
     private fun uploadTimetable(timetable : Array<MutableList<String>>){
-        val ref = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/$form/timetable")
-        ref.removeValue() //Сначала удаляем расписание, после чего загружаем TODO: подумать, можно ли оптимизировать
-        for(i in 0..6){
-            for(k in 0..(array[i].size-1)){
-                ref.child(dayvalues[i].toString()).child(k.toString()).setValue(array[i][k])
-                    .addOnFailureListener {
-                        Toast.makeText(this, "NO WAY", Toast.LENGTH_SHORT).show()
-                        return@addOnFailureListener
-                    }
-            }
+//        for(i in 0..6){
+//            for(k in 0..(array[i].size-1)){
+//                if(array[dayvalues[i]][k] != null){
+//                    //Log.d("timetablelog", "${array[dayvalues[i]][k]} ${dayvalues[i]} $k")
+//                }
+//
+//            }
+//        }
+        array.forEach {
+            Log.d("timetablelog", "${it.toString()} ${array.indexOf(it)}")
         }
+
+        val ref = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/$form/timetable")
+        ref.addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onDataChange(p0: DataSnapshot) {
+                var arrayDB = Array(7, {mutableListOf<String>()})
+                array.forEachIndexed { index, mutableList ->
+                    val indexOut = index
+
+                    p0.child("${dayvalues[indexOut]}").children.forEach {
+                        arrayDB[index].add(it.getValue().toString())
+                        Log.d("asdgg", it.getValue().toString())
+                    }
+                    Log.d("asdgg", arrayDB[indexOut].toString())
+                    Log.d("timetableloga", p0.child("${dayvalues[indexOut]}").toString())
+
+                    if(array[index].size >= arrayDB[index].size){
+                        array[index].forEachIndexed { indexIn, s ->
+                            if((indexIn > arrayDB[index].size - 1) || (s != arrayDB[index][indexIn])){
+                                ref.child("${dayvalues[index]}").child("$indexIn").setValue(s)
+                            }
+                        }
+                    }
+                    else{
+                        arrayDB[index].forEachIndexed { indexIn, s ->
+                            if((indexIn <= array[index].size -1) && (s != array[index][indexIn])){
+                                ref.child("${dayvalues[index]}").child("$indexIn").setValue(array[index][indexIn])
+                            }
+                            else if(indexIn > array[index].size - 1){
+                                ref.child("${dayvalues[index]}").child("$indexIn").removeValue()
+                            }
+                        }
+                    }
+
+                }
+
+
+            }
+            override fun onCancelled(p0: DatabaseError) {}
+        })
 
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)

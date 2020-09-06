@@ -85,6 +85,7 @@ class ChooseFormActivity : AppCompatActivity() {
                                 override fun onDataChange(p0: DataSnapshot) {
                                     val password = p0.child("password").value
                                     if(passEditText.editText?.text.toString() == password){
+                                        ref.child("students").child("$uid").setValue(2)
                                         val refuser = FirebaseDatabase.getInstance().getReference("/users/$uid")
                                         refuser.child("form").setValue(form)
                                             .addOnSuccessListener {
