@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlindiary.loginregister.RegisterActivity
 import com.example.kotlindiary.models.User
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -94,6 +95,9 @@ class SettingsFragment : Fragment() {
                     list[position].settingText == "Изменить электронную почту (скоро)" ||
                     list[position].settingText == "Изменить пароль (скоро)" ||
                     list[position].settingText == "Изменить пароль класса"){
+                    if(list[position].settingText == "Изменить пароль класса"){
+                        itemView.textView_SettingName.text = "Изменить пароль класса (для старост)"
+                    }
                     itemView.isEnabled = false
                     itemView.textView_SettingName.setTextColor(Color.parseColor("#a1a1a1"))
                 }
@@ -103,6 +107,7 @@ class SettingsFragment : Fragment() {
                 }
 
                 if(list[position].settingText == "Изменить пароль класса" && status == "3"){
+                    itemView.textView_SettingName.text = "Изменить пароль класса"
                     itemView.isEnabled = true
                     itemView.textView_SettingName.setTextColor(Color.parseColor("#000000"))
                 }
@@ -150,6 +155,28 @@ class SettingsFragment : Fragment() {
                                 .setTitle("О нас")
                             builder.setPositiveButton("Закрыть"){dialog, which ->
                                 Toast.makeText(context, "Спасибо, что пользуетесь моим приложением! <3", Toast.LENGTH_SHORT).show()
+                            }
+                            builder.create().show()
+                        }
+                        else if(setting == "Изменить пароль класса"){
+                            val dialogInflater = LayoutInflater.from(context).inflate(R.layout.dialog_enter_form_password, null)
+                            val passEditText = dialogInflater.findViewById(R.id.textInputLayout_EnterFormPassword) as TextInputLayout
+                            val builder = AlertDialog.Builder(context)
+                                .setView(dialogInflater)
+                                .setTitle("Смена пароля класса")
+                            builder.setPositiveButton("Далее"){dialog, which ->
+                                if(passEditText.editText?.text.toString() != ""){
+                                    val password = passEditText.editText?.text.toString()
+                                    val ref = FirebaseDatabase.getInstance().getReference("/schools/${userMain.school}/${userMain.form}")
+                                    ref.child("password").setValue(password)
+                                    Toast.makeText(context, "Вы успешно сменили пароль класса!", Toast.LENGTH_LONG)
+                                }
+                                else{
+                                    Toast.makeText(context, "Пароль не может быть пустым", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                            builder.setNegativeButton("Закрыть"){dialog, which ->
+
                             }
                             builder.create().show()
                         }
