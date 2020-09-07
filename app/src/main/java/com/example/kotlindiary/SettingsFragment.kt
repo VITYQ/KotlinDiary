@@ -27,6 +27,7 @@ import com.google.firebase.database.ValueEventListener
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
+import kotlinx.android.synthetic.main.activity_main_coordinator.*
 import kotlinx.android.synthetic.main.divider_row.view.*
 import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.android.synthetic.main.profile_row.view.*
@@ -46,10 +47,12 @@ class SettingsFragment : Fragment() {
 
         return inflater.inflate(R.layout.fragment_settings, container, false)
     }
-    //TODO: разобраться с адаптером
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 //
+        //bottom_navigation.isClickable = false
+
         val settingsList = ArrayList<settingsFragmentData>()
         settingsList.add(settingsFragmentData(0, ""))
         settingsList.add(settingsFragmentData(2, "Настройки"))
@@ -106,6 +109,18 @@ class SettingsFragment : Fragment() {
                     itemView.textView_SettingName.setTextColor(Color.parseColor("#000000"))
                 }
 
+                if(list[position].settingText == "Изменить расписание" && status == "0"){
+                    itemView.textView_SettingName.text = "Изменить расписание (вы в бане)"
+                    itemView.isEnabled = false
+                    itemView.textView_SettingName.setTextColor(Color.parseColor("#a1a1a1"))
+                }
+                else if(list[position].settingText == "Изменить расписание" && status != "0"){
+                    itemView.textView_SettingName.text = "Изменить расписание"
+                    itemView.isEnabled = true
+                    itemView.textView_SettingName.setTextColor(Color.parseColor("#000000"))
+                }
+
+
                 if(list[position].settingText == "Изменить пароль класса" && status == "3"){
                     itemView.textView_SettingName.text = "Изменить пароль класса"
                     itemView.isEnabled = true
@@ -140,6 +155,12 @@ class SettingsFragment : Fragment() {
                             builder.setTitle("Сменить школу")
                             builder.setMessage("После смены школы права старосты будут утрачены")
                             builder.setPositiveButton("Да"){dialog, which ->
+                                val ref = FirebaseDatabase.getInstance().getReference("/schools/${userMain.school}/${userMain.form}/students")
+                                val uid = FirebaseAuth.getInstance().uid.toString()
+                                ref.child(uid).removeValue()
+                                val refa = FirebaseDatabase.getInstance().getReference("/users/$uid")
+                                refa.child("form").setValue("")
+                                refa.child("school").setValue("")
                                 val intent = Intent(context, ChooseSchoolActivity::class.java)
                                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                                 startActivity(context, intent, null)
@@ -179,6 +200,11 @@ class SettingsFragment : Fragment() {
 
                             }
                             builder.create().show()
+                        }
+                        else if(setting == "Наш класс"){
+                            val intent = Intent(context, OurClassActivity::class.java)
+                            intent.putExtra("status", status)
+                            startActivity(context, intent, null)
                         }
 
                     }

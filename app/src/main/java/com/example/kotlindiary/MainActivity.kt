@@ -15,6 +15,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.forEach
 import androidx.fragment.app.FragmentTransaction
 import com.example.kotlindiary.loginregister.RegisterActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -31,11 +32,14 @@ class MainActivity : AppCompatActivity() {
     lateinit var mainFragment: MainFragment
 
     val a = 3
+    var first = true
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_coordinator)
         //verifyIsUserLoggedIn()
+        bottom_navigation.menu.forEach { it.isEnabled = false }
         val uid = FirebaseAuth.getInstance().uid
         Log.d("BBBDLO", uid.toString())
         if (uid == null){
@@ -131,6 +135,14 @@ class MainActivity : AppCompatActivity() {
                 Log.d("agada", "Keyboard gone")
                 bottomsheetmain.state = BottomSheetBehavior.STATE_COLLAPSED
             }
+
+            if(i8 == i4 && first == true){
+                first = false
+                bottom_navigation.animate()
+                    .y((coordinatorlayout.height+ bottom_navigation.height).toFloat())
+                    .setDuration(0).start()
+            }
+            else{}
         }
     }
     override fun onBackPressed() {

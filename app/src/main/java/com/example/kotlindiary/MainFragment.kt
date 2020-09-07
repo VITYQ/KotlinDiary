@@ -14,19 +14,26 @@ import android.view.*
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.kotlindiary.loginregister.ChooseFormActivity
 import com.example.kotlindiary.loginregister.ProfileActivity
 import com.example.kotlindiary.models.User
+import com.google.android.material.bottomnavigation.BottomNavigationMenu
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.ToolBar_Main
+import kotlinx.android.synthetic.main.activity_main_coordinator.*
 import kotlinx.android.synthetic.main.day_fragment.view.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.layout_bottom_sheet_main.*
@@ -43,6 +50,8 @@ import java.util.*
 
 var data = Date().day-1
 var previousPage = 0
+lateinit var coordinatorLayoutMain : CoordinatorLayout
+lateinit var bottomNavigation : BottomNavigationView
 lateinit var mainviewpager : ViewPager2
 lateinit var bottomsheet : BottomSheetBehavior<ConstraintLayout>
 lateinit var buttonBottomSheet : Button
@@ -54,10 +63,13 @@ lateinit var tabLayoutFragment : TabLayout
 lateinit var listener : ValueEventListener
 lateinit var listenerInside : ValueEventListener
 lateinit var ListenerForSchools : ValueEventListener
+lateinit var ListenerForStatus : ValueEventListener
 lateinit var ref : DatabaseReference
 lateinit var refTimetable : DatabaseReference
 lateinit var refSchool : DatabaseReference
+lateinit var refForStatus : DatabaseReference
 public lateinit var userMain : User
+var studentStatus = ""
 var timetableDaysActivated = booleanArrayOf(false, false, false, false, false, false, false)
 var year = Date().year
 var month = Date().month
@@ -95,6 +107,8 @@ class MainFragment : Fragment() {
         }
         Log.d("Datelog", currentpagedate.time.day.toString())
 
+        coordinatorLayoutMain = (activity as MainActivity).coordinatorlayout
+        bottomNavigation = (activity as MainActivity).bottom_navigation
         buttonBottomSheet = (activity as MainActivity).button_sheet_add
         textViewBottomSheet = (activity as MainActivity).textView_hometask
         textViewLessonBottomSheet = (activity as MainActivity).textView_lesson
@@ -102,6 +116,8 @@ class MainFragment : Fragment() {
         buttonCopyBottomSheet = (activity as MainActivity).button_Copy
         tabLayoutFragment = tabLayoutMainFragment
         mainviewpager = viewpager_mainfragment
+
+
 
         downloadHomework()
 
@@ -112,6 +128,7 @@ class MainFragment : Fragment() {
                 val activity = activity as MainActivity
                 changeTitle(position, activity)
                 bottomsheet.state = BottomSheetBehavior.STATE_COLLAPSED
+
             }
         })
 
@@ -127,12 +144,15 @@ class MainFragment : Fragment() {
         refSchool.removeEventListener(ListenerForSchools)
         ref.removeEventListener(listener)
         refTimetable.removeEventListener(listenerInside)
-
-
+        refForStatus.removeEventListener(ListenerForStatus)
         super.onPause()
     }
 
      fun downloadHomework(){
+
+
+
+
         var calendar = Calendar.getInstance()
         var date = Date()
         Log.d("DateLog", "1: ${date.date}")
@@ -186,9 +206,11 @@ class MainFragment : Fragment() {
 
 
 
+
                     refTimetable = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/$form/timetable")
                     listenerInside = refTimetable.addValueEventListener(object : ValueEventListener{
                         override fun onDataChange(p0: DataSnapshot) {
+
                             var timetable = Array(7, {mutableListOf<String>()})
                             var arrayHometask = emptyArray<String>()
                             var timetableisreal = false
@@ -207,15 +229,28 @@ class MainFragment : Fragment() {
                             if(timetableisreal){
                                 val arrayfortimetable : Array<MutableList<String>> = makeIntForTimetableAdapter()
                                 if(schoolName != null && form != null){
-                                    var adapter = ViewPager2Adapter(arrayfortimetable, timetable,arrayHometask, schoolName, form){}
+                                    var adapter = ViewPager2Adapter(activity as MainActivity, arrayfortimetable, timetable,arrayHometask, schoolName, form){}
                                     //adapter.notifyDataSetChanged()
+                                    bottomNavigation.menu.forEach { it.isEnabled = true }
+                                    bottomNavigation.animate()
+                                        .y((coordinatorLayoutMain.height - bottomNavigation.height).toFloat())
+                                        .setDuration(500).start()
+                                    refForStatus = FirebaseDatabase.getInstance().getReference("/schools/${userMain.school}/${userMain.form}/students")
+                                    ListenerForStatus = refForStatus.addValueEventListener(object : ValueEventListener{
+                                        override fun onDataChange(p0: DataSnapshot) {
+                                            val uid = userMain.uid
+                                            studentStatus = p0.child(uid).value.toString()
+                                        }
+
+                                        override fun onCancelled(p0: DatabaseError) {}
+                                    })
                                     mainviewpager.adapter = adapter
                                     mainviewpager.setCurrentItem(250, false)
                                     adapterTabLayout()
                                 }
                             }
                             else{
-                                val intent = Intent(activity, SetTimetableActivity::class.java) // TODO: баг при ручном изменении в БД класса у пользователя, после расписания вылет
+                                val intent = Intent(activity, SetTimetableActivity::class.java)
                                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                                 //ref.removeEventListener(listener)
                                 //refTimetable.removeEventListener(listenerInside)
@@ -263,7 +298,7 @@ class MainFragment : Fragment() {
 }
 
 
-class ViewPager2Adapter(val arrayfortimetable : Array<MutableList<String>>, val timetable : Array<MutableList<String>>, val hometask : Array<String>, val school : String, val form : String, private val itemClickListener: (Int) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ViewPager2Adapter(val context : Context, val arrayfortimetable : Array<MutableList<String>>, val timetable : Array<MutableList<String>>, val hometask : Array<String>, val school : String, val form : String, private val itemClickListener: (Int) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
             ItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.day_fragment, parent, false))
@@ -274,7 +309,7 @@ class ViewPager2Adapter(val arrayfortimetable : Array<MutableList<String>>, val 
             for(i in 250..270){
                 Log.d("LogAdapter", "i: $i, ${arrayfortimetable[i]}")
             }
-            val adapter = RecyclerViewAdapter(arrayfortimetable[position][1],timetable[arrayfortimetable[position][0].toInt()], hometask, school, form){}
+            val adapter = RecyclerViewAdapter(context, arrayfortimetable[position][1],timetable[arrayfortimetable[position][0].toInt()], hometask, school, form){}
             holder.itemView.recycleview_TimetableFragment.adapter = adapter
 //            val dec = DividerItemDecoration(holder.itemView.recycleview_TimetableFragment.context, DividerItemDecoration.HORIZONTAL) //Вертикальный разделитель
 //            holder.itemView.recycleview_TimetableFragment.addItemDecoration(dec)
@@ -303,7 +338,7 @@ class ViewPager2Adapter(val arrayfortimetable : Array<MutableList<String>>, val 
     }
 
 
-class RecyclerViewAdapter(val date : String,val timetable : MutableList<String>, val hometask : Array<String>, val school : String, val form : String, private val itemClickListener: (Int) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RecyclerViewAdapter(val context: Context, val date : String,val timetable : MutableList<String>, val hometask : Array<String>, val school : String, val form : String, private val itemClickListener: (Int) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         val items = mutableListOf<Any>()
 
@@ -375,22 +410,24 @@ class RecyclerViewAdapter(val date : String,val timetable : MutableList<String>,
             }
         }
         fun uploadHometask(holder: RecyclerView.ViewHolder){
-            val text = editTextBottomSheet.text
-            if (text.toString() != "") {
-                bottomsheet.setState(BottomSheetBehavior.STATE_COLLAPSED)
-                Log.d("asdf", bottomsheet.state.toString())
-                var date = Date()
-                date = currentpagedate.getTime()
-                val ddate = date.date
-                val dmonth = date.month + 1
-                val dyear = date.year + 1900
-                val string = "$ddate-$dmonth-$dyear"
-                val lesson = holder.itemView.textView2.text
-                val ref = FirebaseDatabase.getInstance()
-                    .getReference("/schools/$school/$form/hometasks/$string")
+            if(studentStatus == "0"){ Toast.makeText(context, "Вы не можете изменять дз, так как Вы в бане", Toast.LENGTH_LONG).show()}
+            else{
+                val text = editTextBottomSheet.text
+                if (text.toString() != "") {
+                    bottomsheet.setState(BottomSheetBehavior.STATE_COLLAPSED)
+                    Log.d("asdf", bottomsheet.state.toString())
+                    var date = Date()
+                    date = currentpagedate.getTime()
+                    val ddate = date.date
+                    val dmonth = date.month + 1
+                    val dyear = date.year + 1900
+                    val string = "$ddate-$dmonth-$dyear"
+                    val lesson = holder.itemView.textView2.text
+                    val ref = FirebaseDatabase.getInstance().getReference("/schools/$school/$form/hometasks/$string")
 
-                Log.d("DBLog", "string : $string, lesson : $lesson, text : $text")
-                ref.child("$lesson").setValue(text.toString())
+                    Log.d("DBLog", "string : $string, lesson : $lesson, text : $text")
+                    ref.child("$lesson").setValue(text.toString())
+                }
             }
         }
         private inner class ItemViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
