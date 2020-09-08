@@ -93,7 +93,10 @@ class OurClassActivity : AppCompatActivity() {
                     status = "Бан"
                     holder.itemView.textView_StudentStatus.setTextColor(Color.parseColor("#D25550"))
                 }
-                "1" -> status = "Ученик"
+                "1" -> {
+                    status = "Ученик"
+                    holder.itemView.textView_StudentStatus.setTextColor(Color.parseColor("#a1a1a1"))
+                }
                 "2" -> status = "Модератор"
                 "3" -> {
                     status = "Староста"
