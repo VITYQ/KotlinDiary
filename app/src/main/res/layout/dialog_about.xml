@@ -10,7 +10,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:text="Colibri 0.9 (alpha)"
+        android:text="Colibri 1.0"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/textView6"
         app:layout_constraintEnd_toEndOf="parent"
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
 
-        android:text="Автор: Виталий Сорокин \nЕсли нашли ошибку или есть предложение, пишите на почту \nvitaly.sorokin14@gmail.com"
+        android:text="Автор: Виталий Сорокин \nЕсли нашли ошибку или есть предложение, пишите на почту: \nvityq.dev@gmail.com"
 
 
         app:layout_constraintEnd_toEndOf="parent"
