@@ -3,7 +3,6 @@ package com.example.kotlindiary
 
 //import android.app.Fragment
 
-import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -17,6 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
@@ -24,24 +24,22 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.kotlindiary.loginregister.ChooseFormActivity
 import com.example.kotlindiary.loginregister.ProfileActivity
 import com.example.kotlindiary.models.User
-import com.google.android.material.bottomnavigation.BottomNavigationMenu
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.ToolBar_Main
 import kotlinx.android.synthetic.main.activity_main_coordinator.*
 import kotlinx.android.synthetic.main.day_fragment.view.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.layout_bottom_sheet_main.*
-import kotlinx.android.synthetic.main.layout_bottom_sheet_main.view.*
 import kotlinx.android.synthetic.main.lesson_item_card.view.*
 import kotlinx.android.synthetic.main.lesson_row.view.textView
 import kotlinx.android.synthetic.main.lesson_row.view.textView2
 import java.util.*
+import kotlin.math.abs
 
 /**
  * A simple [Fragment] subclass.
@@ -245,7 +243,9 @@ class MainFragment : Fragment() {
                                         override fun onCancelled(p0: DatabaseError) {}
                                     })
                                     mainviewpager.adapter = adapter
+                                    mainviewpager.animate().alpha(0F).setDuration(0).start()
                                     mainviewpager.setCurrentItem(250, false)
+                                    mainviewpager.animate().alpha(1F).setDuration(500).start()
                                     adapterTabLayout()
                                 }
                             }
@@ -295,6 +295,10 @@ class MainFragment : Fragment() {
             override fun onCancelled(p0: DatabaseError) {}
         })
     }
+
+
+
+
 }
 
 
