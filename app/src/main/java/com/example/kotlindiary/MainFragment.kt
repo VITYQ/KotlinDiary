@@ -10,10 +10,7 @@ import android.os.*
 import android.text.Editable
 import android.util.Log
 import android.view.*
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
@@ -54,6 +51,9 @@ lateinit var mainviewpager : ViewPager2
 lateinit var bottomsheet : BottomSheetBehavior<ConstraintLayout>
 lateinit var buttonBottomSheet : Button
 lateinit var buttonCopyBottomSheet : Button
+lateinit var splashContainer : ConstraintLayout // сплэшскрин
+lateinit var circularLoading : FrameLayout
+lateinit var textSplash : TextView // для экрана загрузки
 lateinit var textViewBottomSheet : TextView //дз урока
 lateinit var textViewLessonBottomSheet: TextView
 lateinit var editTextBottomSheet: EditText
@@ -74,7 +74,7 @@ var month = Date().month
 var date = Date().date
 var day = Date().day
 var currentpagedate = Calendar.getInstance()
-
+var fff : Boolean = true
 
 class MainFragment : Fragment() {
 
@@ -104,7 +104,11 @@ class MainFragment : Fragment() {
             Log.d("DBLog", "BEFORE: i : $i, ${timetableDaysActivated[i].toString()}")
         }
         Log.d("Datelog", currentpagedate.time.day.toString())
-
+        fff = (activity as MainActivity).first
+        Log.d("hey" , fff.toString())
+        circularLoading = (activity as MainActivity).progress_Splash
+        splashContainer = (activity as MainActivity).splashView
+        textSplash = (activity as MainActivity).textView_Splash
         coordinatorLayoutMain = (activity as MainActivity).coordinatorlayout
         bottomNavigation = (activity as MainActivity).bottom_navigation
         buttonBottomSheet = (activity as MainActivity).button_sheet_add
@@ -228,6 +232,8 @@ class MainFragment : Fragment() {
                                 val arrayfortimetable : Array<MutableList<String>> = makeIntForTimetableAdapter()
                                 if(schoolName != null && form != null){
                                     var adapter = ViewPager2Adapter(activity as MainActivity, arrayfortimetable, timetable,arrayHometask, schoolName, form){}
+                                    splashContainer.animate().alpha(0F).setDuration(1000).start()
+                                    circularLoading.animate().alpha(0f).setDuration(0).setDuration(3000).alpha(1f).setDuration(1000)
                                     //adapter.notifyDataSetChanged()
                                     bottomNavigation.menu.forEach { it.isEnabled = true }
                                     bottomNavigation.animate()
@@ -259,7 +265,7 @@ class MainFragment : Fragment() {
 
                         }
                         override fun onCancelled(p0: DatabaseError) {
-                            Log.d("DBLOGFRAGMENT", "CLOSE FIRST")
+                            Log.d("DBLOfGFRAGMENT", "CLOSE FIRST")
                         }
                     })
                 }

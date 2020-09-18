@@ -42,6 +42,7 @@ class RegisterActivity : AppCompatActivity() {
         }
         textInputLayout_EmailRegister.editText?.doOnTextChanged { text, start, count, after ->
             textInputLayout_EmailRegister.error = null
+
         }
         textInputLayout_UsernameRegister.editText?.doOnTextChanged { text, start, count, after ->
             textInputLayout_UsernameRegister.error = null
@@ -100,7 +101,19 @@ class RegisterActivity : AppCompatActivity() {
                 if(it.message.toString() == "The email address is badly formatted."){
                     Toast.makeText(this, "Неверно указан email адрес", Toast.LENGTH_SHORT).show()
                     Log.d("RegisterActivity", "Wrong mail")
+                    textInputLayout_EmailRegister.error = "Введите email"
                 }
+                else if(it.message.toString() == "Failed to create user The email address is already in use by another account."){
+                    Toast.makeText(this, "Этот email уже занят", Toast.LENGTH_SHORT).show()
+                    textInputLayout_EmailRegister.error ="Email занят"
+
+                }
+
+                else if(it.message.toString().contains("The given password", true)){
+                    Toast.makeText(this, "В пароле должно быть минимум 6 символов", Toast.LENGTH_SHORT).show()
+                    textInputLayout_PasswordRegister.error = "Пароль должен быть больше 6 символов"
+                }
+
             }
     }
 
@@ -125,6 +138,7 @@ class RegisterActivity : AppCompatActivity() {
                 }
             }
             .addOnFailureListener{
+                Log.d("loginregister", it.toString())
                 //что-нибудь для лога сюда можно вписать
             }
     }
