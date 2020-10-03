@@ -83,6 +83,9 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
 
     ): View? {
+        splashContainer = (activity as MainActivity).splashView
+        //splashContainer.visibility = View.VISIBLE
+
         data = Date().day-1
         previousPage = 0
         timetableDaysActivated = booleanArrayOf(false, false, false, false, false, false, false)
@@ -107,7 +110,7 @@ class MainFragment : Fragment() {
         fff = (activity as MainActivity).first
         Log.d("hey" , fff.toString())
         circularLoading = (activity as MainActivity).progress_Splash
-        splashContainer = (activity as MainActivity).splashView
+
         textSplash = (activity as MainActivity).textView_Splash
         coordinatorLayoutMain = (activity as MainActivity).coordinatorlayout
         bottomNavigation = (activity as MainActivity).bottom_navigation
@@ -143,15 +146,22 @@ class MainFragment : Fragment() {
 
     override fun onPause() {
         Log.d("DBlogFragment", "Pause")
-        refSchool.removeEventListener(ListenerForSchools)
-        ref.removeEventListener(listener)
-        refTimetable.removeEventListener(listenerInside)
-        refForStatus.removeEventListener(ListenerForStatus)
+        if(refSchool != null){
+            refSchool.removeEventListener(ListenerForSchools)
+        }
+        if(ref != null){
+            ref.removeEventListener(listener)
+        }
+        if(refTimetable != null){
+            refTimetable.removeEventListener(listenerInside)
+        }
+        if(refForStatus != null){
+            refForStatus.removeEventListener(ListenerForStatus)
+        }
         super.onPause()
     }
 
      fun downloadHomework(){
-
 
 
 
@@ -210,6 +220,7 @@ class MainFragment : Fragment() {
 
 
                     refTimetable = FirebaseDatabase.getInstance().getReference("/schools/$schoolName/$form/timetable")
+
                     listenerInside = refTimetable.addValueEventListener(object : ValueEventListener{
                         override fun onDataChange(p0: DataSnapshot) {
 
@@ -232,8 +243,18 @@ class MainFragment : Fragment() {
                                 val arrayfortimetable : Array<MutableList<String>> = makeIntForTimetableAdapter()
                                 if(schoolName != null && form != null){
                                     var adapter = ViewPager2Adapter(activity as MainActivity, arrayfortimetable, timetable,arrayHometask, schoolName, form){}
-                                    splashContainer.animate().alpha(0F).setDuration(1000).start()
-                                    circularLoading.animate().alpha(0f).setDuration(0).setDuration(3000).alpha(1f).setDuration(1000)
+                                    val splashAnimation = splashContainer.animate().alpha(0F).setDuration(1000)
+                                        .setUpdateListener {
+
+                                            if(it.animatedFraction == 1f){
+                                                splashContainer.visibility = View.GONE
+                                                splashContainer.isEnabled = false
+                                                splashContainer.elevation = 0f
+                                                Log.d("dsjlksj", "yess")
+                                            }
+                                        }
+                                    splashAnimation.start()
+                                    //splashContainer.visibility = View.GONE
                                     //adapter.notifyDataSetChanged()
                                     bottomNavigation.menu.forEach { it.isEnabled = true }
                                     bottomNavigation.animate()

@@ -54,18 +54,18 @@ class SettingsFragment : Fragment() {
         //bottom_navigation.isClickable = false
 
         val settingsList = ArrayList<settingsFragmentData>()
-        settingsList.add(settingsFragmentData(0, ""))
-        settingsList.add(settingsFragmentData(2, "Настройки"))
-        settingsList.add(settingsFragmentData(1, "Наш класс"))
-        settingsList.add(settingsFragmentData(1, "Изменить расписание"))
-        settingsList.add(settingsFragmentData(1, "Сменить школу"))
-        settingsList.add(settingsFragmentData(1, "Изменить пароль класса"))
-        settingsList.add(settingsFragmentData(1, "Изменить пароль (скоро)"))
-        settingsList.add(settingsFragmentData(1, "Изменить электронную почту (скоро)"))
-        settingsList.add(settingsFragmentData(1, "Уведомления (скоро)"))
-        settingsList.add(settingsFragmentData(2, "Прочее"))
-        settingsList.add(settingsFragmentData(1, "О приложении"))
-        settingsList.add(settingsFragmentData(1, "Выйти"))
+        settingsList.add(settingsFragmentData(0, "", false))
+        settingsList.add(settingsFragmentData(2, "Настройки", false))
+        settingsList.add(settingsFragmentData(1, "Наш класс", false))
+        settingsList.add(settingsFragmentData(1, "Изменить расписание", false))
+        settingsList.add(settingsFragmentData(1, "Сменить школу", false))
+        settingsList.add(settingsFragmentData(1, "Изменить пароль класса", false))
+        settingsList.add(settingsFragmentData(1, "Изменить пароль (скоро)", false))
+        settingsList.add(settingsFragmentData(1, "Изменить электронную почту (скоро)", false))
+        settingsList.add(settingsFragmentData(1, "Уведомления (скоро)", false))
+        settingsList.add(settingsFragmentData(2, "Прочее", false))
+        settingsList.add(settingsFragmentData(1, "О приложении", false))
+        settingsList.add(settingsFragmentData(1, "Выйти", false))
 
 
         val adapterForSettings = settingsAdapter(activity as MainActivity, settingsList)
@@ -83,7 +83,7 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    data class settingsFragmentData(val viewType: Int, val settingText : String)
+    data class settingsFragmentData(val viewType: Int, val settingText : String, var expanded : Boolean)
 
     class settingsAdapter(val context : Context, val list : ArrayList<settingsFragmentData>) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
         override fun getItemCount(): Int = list.size
@@ -219,6 +219,16 @@ class SettingsFragment : Fragment() {
                 val email = userMain.email
                 val school = userMain.school
                 val username = userMain.username
+//                if(list[position].expanded){
+//                    itemView.textView9.visibility = View.VISIBLE
+//                }
+//                else{ itemView.textView9.visibility = View.GONE}
+//                itemView.setOnClickListener{
+//                    Log.d("asdfgds", "clicked")
+//                    list[position].expanded = !list[position].expanded
+//                    notifyItemChanged(position)
+//
+//                }
                 itemView.textView_NameSurrNameUsernameSettings.text = "$name $surname ($username)"
                 itemView.textView_SchoolFormSettings.text = "$school, $form"
                 itemView.textView_EmailSettings.text = "$email"
