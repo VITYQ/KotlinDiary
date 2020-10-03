@@ -378,7 +378,7 @@ class RecyclerViewAdapter(val context: Context, val date : String,val timetable 
             //ItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.lesson_row, parent, false))
 
         override fun getItemCount(): Int = timetable.size
-
+//kh
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
             holder.itemView.textView2.text = timetable[position]
