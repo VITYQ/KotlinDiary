@@ -42,13 +42,15 @@
         <activity android:name=".loginregister.LoginActivity" />
         <activity android:name=".loginregister.RegisterActivity" />
         <service
-            android:name=".FirebaseInstanceService">
+            android:name=".FirebaseInstanceService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
         <service
-            android:name=".FirebaseMsgService">
+            android:name=".FirebaseMsgService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
