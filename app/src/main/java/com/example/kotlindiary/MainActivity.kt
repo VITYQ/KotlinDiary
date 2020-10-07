@@ -22,6 +22,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_main.ToolBar_Main
 import kotlinx.android.synthetic.main.activity_main_coordinator.*
 import kotlinx.android.synthetic.main.layout_bottom_sheet_main.*
@@ -50,6 +51,10 @@ class MainActivity : AppCompatActivity() {
         }
         else {
             val bottomSheetBehavior = BottomSheetBehavior.from(layoutBottomSheet)
+
+            FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener {
+                Log.d("fadhh", it.token)
+            }
 
             supportFragmentManager
                 .beginTransaction()
